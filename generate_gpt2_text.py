@@ -5,12 +5,13 @@ def generate_text(
         model_folder="trained_model",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
+        min_text_length=10000,
         write_raw_output_to_filename="raw_loaded_generated_unformatted_wav.txt",
         write_clean_output_to_filename="clean_loaded_generated_formatted_hex_str.txt"
-):
+) -> None:
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
-    while len(raw_generated_wav_txt) < 10000:
+    while len(raw_generated_wav_txt) < min_text_length:
         raw_generated_wav_txt = raw_generated_wav_txt[:-16] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-16:], return_as_list=True)[0]#.split('-')[0]
     if write_raw_output_to_filename:
         with open(write_raw_output_to_filename, 'w') as f:
