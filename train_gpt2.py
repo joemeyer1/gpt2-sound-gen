@@ -51,18 +51,22 @@ def train_gpt2(
         output_dir="trained_model",
     )
 
-    raw_generated_texts = ai.generate(n=5, max_length=1000, prompt="", return_as_list=True)
-    print("RAW:\n", *raw_generated_texts, sep="\n" + "=" * 10 + "\n")
-
-    print("\nCLEAN:")
-    for raw_generated_text in raw_generated_texts:
-        print(f"{clean_model_output(raw_generated_text)}\n", end="="*10 + "\n")
+    generate_text(
+        model_folder="trained_model",
+        tokenizer_file="aitextgen.tokenizer.json",
+        prompt="",
+        min_text_length=100,
+        window_length=16,
+        write_raw_output_to_filename=None,
+        write_clean_output_to_filename=None,
+    )
 
     generate_text(
         model_folder="trained_model",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
         min_text_length=10000,
+        window_length=16,
         write_raw_output_to_filename="raw_generated_unformatted_wav.txt",
         write_clean_output_to_filename="clean_generated_formatted_hex_str.txt"
     )

@@ -6,32 +6,28 @@ def generate_text(
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
         min_text_length=10000,
-        write_raw_output_to_filename="raw_loaded_generated_unformatted_wav.txt",
-        write_clean_output_to_filename="clean_loaded_generated_formatted_hex_str.txt"
+        window_length=16,
+        write_raw_output_to_filename=None,
+        write_clean_output_to_filename=None,
 ) -> None:
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
     while len(raw_generated_wav_txt) < min_text_length:
-        raw_generated_wav_txt = raw_generated_wav_txt[:-16] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-16:], return_as_list=True)[0]#.split('-')[0]
+        raw_generated_wav_txt = raw_generated_wav_txt[:-window_length] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-window_length:], return_as_list=True)[0]#.split('-')[0]
     if write_raw_output_to_filename:
         with open(write_raw_output_to_filename, 'w') as f:
             f.write(raw_generated_wav_txt)
+    else:
+        print(f"RAW:\n{raw_generated_wav_txt}\n")
     clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
-    word_list = clean_generated_wav_txt.split('-')
-    hex_str = ""
-    i = 0
-    for word in word_list:
-        worda, wordb = word[:4], word[4:]
-        hex_str += worda + " " + wordb
-        i += 1
-        if not i % 4:
-            hex_str += '\n'
-        else:
-            hex_str += ' '
+
+    clean_generated_wav_txt = format_wav_body(hex_text=clean_generated_wav_txt)
     # TODO: write this sound data as a .wav file - figure out how to find + write header info
     if write_clean_output_to_filename:
         with open(write_clean_output_to_filename, 'w') as f:
-            f.write(hex_str)
+            f.write(clean_generated_wav_txt)
+    else:
+        print(f"CLEAN:\n{clean_generated_wav_txt}\n")
 
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
     clean_output = ""
@@ -42,6 +38,23 @@ def clean_model_output(model_output: str, bits_per_word=8) -> str:
         clean_model_output_item = padding + truncated_word + '-'
         clean_output += clean_model_output_item
     return clean_output
+
+
+def format_wav_body(hex_text: str) -> str:
+    """Returns a formatted wav body given hex text like expected gpt2 output."""
+
+    word_list = hex_text.split('-')
+    wav_body = ""
+    i = 0
+    for word in word_list:
+        worda, wordb = word[:4], word[4:]
+        wav_body += worda + " " + wordb
+        i += 1
+        if not i % 4:
+            wav_body += '\n'
+        else:
+            wav_body += ' '
+    return wav_body
 
 
 if __name__ == "__main__":
