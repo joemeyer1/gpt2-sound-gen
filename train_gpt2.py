@@ -8,7 +8,7 @@ from aitextgen.tokenizers import train_tokenizer
 from aitextgen.utils import build_gpt2_config
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
-from generate_gpt2_text import generate_text
+from generate_gpt2_text import generate_text, clean_model_output
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -52,18 +52,7 @@ def train_gpt2(
     )
 
     raw_generated_texts = ai.generate(n=5, max_length=1000, prompt="", return_as_list=True)
-    print("RAW:")
-    print(*raw_generated_texts, sep="\n" + "=" * 10 + "\n")
-
-    def clean_model_output(model_output: str, bits_per_word=8) -> str:
-        clean_output = ""
-        model_output_words = model_output.split('-')
-        for model_output_word in model_output_words:
-            truncated_word = model_output_word[:bits_per_word]
-            padding = "0" * (bits_per_word - len(truncated_word))
-            clean_model_output_item = padding + truncated_word + '-'
-            clean_output += clean_model_output_item
-        return clean_output
+    print("RAW:\n", *raw_generated_texts, sep="\n" + "=" * 10 + "\n")
 
     print("\nCLEAN:")
     for raw_generated_text in raw_generated_texts:
