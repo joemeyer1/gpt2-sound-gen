@@ -1,4 +1,6 @@
 
+import os
+
 from aitextgen import aitextgen
 from aitextgen.TokenDataset import TokenDataset
 from aitextgen.tokenizers import train_tokenizer
@@ -6,7 +8,6 @@ from aitextgen.utils import build_gpt2_config
 
 from make_wav_str_file import convert_wav_to_text_file
 
-import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -35,7 +36,7 @@ def run_gpt2_script(**kwargs) -> None:
     )
     ai = aitextgen(tokenizer_file="aitextgen.tokenizer.json", config=config)
 
-    print(f"Training ({steps} epochs")
+    print(f"Training ({steps} epochs)")
     ai.train(wav_str_filename, batch_size=16, num_steps=steps)
     ai.generate(n=100, prompt="")
 
