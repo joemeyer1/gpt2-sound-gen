@@ -17,6 +17,7 @@ def run_gpt2_script(
     n_max_files: int = 1,
     in_wav_dir_name: str = "sound_files",
     wav_str_filename: str = "sound.txt",
+    learning_rate=1e-3,
 ) -> None:
 
     print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
@@ -40,8 +41,13 @@ def run_gpt2_script(
     )
     ai = aitextgen(tokenizer_file="aitextgen.tokenizer.json", config=config)
 
-    print(f"Training ({steps} epochs)\n")
-    ai.train(wav_str_filename, batch_size=16, num_steps=steps)
+    print(f"Training ({steps} epochs) with learning rate {learning_rate}\n")
+    ai.train(
+        train_data=wav_str_filename,
+        num_steps=steps,
+        learning_rate=learning_rate,
+        batch_size=16,
+    )
     ai.generate(n=100, prompt="")
 
 
