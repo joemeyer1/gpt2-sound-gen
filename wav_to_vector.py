@@ -51,7 +51,7 @@ def extract_header(hex_ls):
         next_bytes, i = get_n_bytes_str(4, hex_ls, i)
     # get subchunk2size
     subchunk2size, i = get_n_bytes_int(4, hex_ls, i)
-    print(f"subchunk2size: {subchunk2size}")
+    print(f"subchunk2size: {subchunk2size}\n")
     header_info = {
         "num_channels": num_channels,
         "sample_rate": sample_rate,
@@ -76,7 +76,7 @@ def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
     return data_channels
 
 def extract_data(
-        read_wav_from_filename: str = "violin_Gs3_1_piano_arco-sul-tasto.wav",
+        read_wav_from_filename: str,
         write_wav_to_filename: Optional[str] = None,
 ) -> Tuple[Dict[int, list], Dict[str, int]]:
     data_hex_ls = file_to_hex_ls(read_wav_from_filename)
