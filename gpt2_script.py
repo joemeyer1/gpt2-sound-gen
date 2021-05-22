@@ -67,10 +67,11 @@ def run_gpt2_script(
     for raw_generated_text in raw_generated_texts:
         print(f"{clean_model_output(raw_generated_text)}\n", end="="*10 + "\n")
 
-    raw_generated_wav_txt = ai.generate(n=1, max_length=200000, prompt="", return_as_list=True)[0]
+    raw_generated_wav_txt = ""
+    while len(raw_generated_wav_txt) < 10000:
+        raw_generated_wav_txt = raw_generated_wav_txt[:-16] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-16:], return_as_list=True)[0]#.split('-')[0]
     clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
-    print(f"\nCLEAN: {clean_generated_wav_txt}\n", end="="*10 + "\n")
-    with open("clean_generated_wav_txt", 'w') as f:
+    with open("clean_generated_unformatted_wav_txt.txt", 'w') as f:
         f.write(clean_generated_wav_txt)
     word_list = clean_generated_wav_txt.split('-')
     hex_str = ""
@@ -84,7 +85,7 @@ def run_gpt2_script(
         else:
             hex_str += ' '
     # TODO: write this sound data as a .wav file - figure out how to find + write header info
-    with open("clean_generated_hex_str", 'w') as f:
+    with open("clean_generated_formatted_hex_str.txt", 'w') as f:
         f.write(hex_str)
 
 
