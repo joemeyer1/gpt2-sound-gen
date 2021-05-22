@@ -60,7 +60,7 @@ def train_gpt2(
 
     generate_text(
         model_folder=output_dir,
-        tokenizer_file="aitextgen.tokenizer.json",
+        tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
         prompt="",
         min_text_length=100,
         window_length=16,
@@ -71,7 +71,7 @@ def train_gpt2(
 
     generate_text(
         model_folder=output_dir,
-        tokenizer_file="aitextgen.tokenizer.json",
+        tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
         prompt="",
         min_text_length=10000,
         window_length=16,
