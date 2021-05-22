@@ -4,7 +4,7 @@
 
 from typing import Tuple, Dict, Optional
 
-from helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str
+from file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str
 
 
 def extract_header(hex_ls):
