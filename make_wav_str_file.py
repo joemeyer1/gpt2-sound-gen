@@ -23,12 +23,7 @@ def convert_wav_to_text_file(
             tokens_list.append(tokens[i: i + chars_per_token])
         return tokens_list
 
-    # vec_int_to_hex = np.vectorize(lambda i: int_to_hex(int_to_convert=i, bytes=4))
     ints_data = get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files)
-    # tokens = tokens.flatten()
-    # # bucketize tokens to avoid having like tens of thousands
-    # mass, bins = np.histogram(a=tokens, bins=16)
-    # tokens = vec_int_to_hex(ints_data)
     new_tokens = ['<endoftext>']
     for file_tokens in ints_data:
         # new_tokens.append('<START>')
