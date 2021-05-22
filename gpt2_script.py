@@ -8,7 +8,6 @@ from make_wav_str_file import convert_wav_to_text_file
 
 
 def run_gpt2_script(
-    model_name: str = "124M",
     steps: int = 100,
     wav_str_filename: str = "sound.txt"
 ) -> None:
@@ -19,12 +18,8 @@ def run_gpt2_script(
         n_max_files=1,
     )
 
-    print(f"file_name: {wav_str_filename}")
-    print(f"steps: {steps}")
-    print(f"model_name: {model_name}")
-
+    print(f"Tokenizing file name {wav_str_filename}")
     train_tokenizer(wav_str_filename)
-    # data = TokenDataset(file_name, block_size=32)  # , vocab_file=vocab_file, merges_file=merges_file
 
     config = build_gpt2_config(
         vocab_size=len(set(TokenDataset(wav_str_filename, block_size=32).tokens)),
@@ -36,6 +31,7 @@ def run_gpt2_script(
     )
     ai = aitextgen(tokenizer_file="aitextgen.tokenizer.json", config=config)
 
+    print(f"Training ({steps} epochs}")
     ai.train(wav_str_filename, batch_size=16, num_steps=steps)
     ai.generate(n=100, prompt="")
 
