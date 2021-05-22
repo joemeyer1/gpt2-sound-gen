@@ -12,7 +12,7 @@ from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def run_gpt2_script(
+def train_gpt2(
     steps: int = 100,
     n_max_files: int = 1,
     in_wav_dir_name: str = "sound_data",
@@ -47,6 +47,7 @@ def run_gpt2_script(
         num_steps=steps,
         learning_rate=learning_rate,
         batch_size=16,
+        output_dir="trained_model",
     )
 
     raw_generated_texts = ai.generate(n=5, max_length=1000, prompt="", return_as_list=True)
@@ -70,9 +71,9 @@ def run_gpt2_script(
     raw_generated_wav_txt = ""
     while len(raw_generated_wav_txt) < 10000:
         raw_generated_wav_txt = raw_generated_wav_txt[:-16] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-16:], return_as_list=True)[0]#.split('-')[0]
+    with open("raw_generated_unformatted_wav.txt", 'w') as f:
+        f.write(raw_generated_wav_txt)
     clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
-    with open("clean_generated_unformatted_wav_txt.txt", 'w') as f:
-        f.write(clean_generated_wav_txt)
     word_list = clean_generated_wav_txt.split('-')
     hex_str = ""
     i = 0
@@ -90,4 +91,4 @@ def run_gpt2_script(
 
 
 if __name__ == "__main__":
-    fire.Fire(run_gpt2_script)
+    fire.Fire(train_gpt2)
