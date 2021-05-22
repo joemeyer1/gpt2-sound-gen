@@ -1,6 +1,9 @@
 
+import os
+
 import fire
 from aitextgen import aitextgen
+
 
 def generate_text(
         model_folder="trained_model",
@@ -10,7 +13,15 @@ def generate_text(
         window_length=16,
         write_raw_output_to_filename=None,
         write_clean_output_to_filename=None,
+        overwrite_previous_model_data=False,
 ) -> None:
+
+    if overwrite_previous_model_data:
+        if write_raw_output_to_filename:
+            write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
+        if write_clean_output_to_filename:
+            write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
+
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
     while len(raw_generated_wav_txt) < min_text_length:
@@ -56,6 +67,12 @@ def format_wav_body(hex_text: str) -> str:
         else:
             wav_body += ' '
     return wav_body
+
+def make_name_unique(name: str) -> str:
+    i = 0
+    while os.path.exists(name):
+        i += 1
+    return name + str(i)
 
 
 if __name__ == "__main__":
