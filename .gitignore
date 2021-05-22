@@ -119,6 +119,9 @@ models/*M/*
 *tokenizer.json
 trained_model/*
 
+# training data
+sound_files/*
+
 
 .idea/*
 *.DS_Store
