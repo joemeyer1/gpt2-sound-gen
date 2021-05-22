@@ -8,6 +8,7 @@ from aitextgen.tokenizers import train_tokenizer
 from aitextgen.utils import build_gpt2_config
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
+from generate_gpt2_text import generate_text
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -68,26 +69,14 @@ def train_gpt2(
     for raw_generated_text in raw_generated_texts:
         print(f"{clean_model_output(raw_generated_text)}\n", end="="*10 + "\n")
 
-    raw_generated_wav_txt = ""
-    while len(raw_generated_wav_txt) < 10000:
-        raw_generated_wav_txt = raw_generated_wav_txt[:-16] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-16:], return_as_list=True)[0]#.split('-')[0]
-    with open("raw_generated_unformatted_wav.txt", 'w') as f:
-        f.write(raw_generated_wav_txt)
-    clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
-    word_list = clean_generated_wav_txt.split('-')
-    hex_str = ""
-    i = 0
-    for word in word_list:
-        worda, wordb = word[:4], word[4:]
-        hex_str += worda + " " + wordb
-        i += 1
-        if not i % 4:
-            hex_str += '\n'
-        else:
-            hex_str += ' '
-    # TODO: write this sound data as a .wav file - figure out how to find + write header info
-    with open("clean_generated_formatted_hex_str.txt", 'w') as f:
-        f.write(hex_str)
+    generate_text(
+        model_folder="trained_model",
+        tokenizer_file="aitextgen.tokenizer.json",
+        prompt="",
+        min_text_length=10000,
+        write_raw_output_to_filename="raw_generated_unformatted_wav.txt",
+        write_clean_output_to_filename="clean_generated_formatted_hex_str.txt"
+    )
 
 
 if __name__ == "__main__":
