@@ -48,7 +48,26 @@ def run_gpt2_script(
         learning_rate=learning_rate,
         batch_size=16,
     )
-    ai.generate(n=100, prompt="")
+
+    raw_generated_texts = ai.generate(n=100, prompt="", return_as_list=True)
+    print("RAW:")
+    print(*raw_generated_texts, sep="\n" + "=" * 10 + "\n")
+
+    def clean_model_output(model_output: str, bits_per_word=8) -> str:
+        clean_output = ""
+        model_output_words = model_output.split('-')
+        for model_output_word in model_output_words:
+            truncated_word = model_output_word[:bits_per_word]
+            padding = "0" * (bits_per_word - len(truncated_word))
+            clean_model_output_item = truncated_word + padding + '-'
+            clean_output += clean_model_output_item
+        return clean_output
+
+    print("\nCLEAN:")
+    for raw_generated_text in raw_generated_texts:
+        print(f"{clean_model_output(raw_generated_text)}\n", end="="*10 + "\n")
+
+
 
 
 if __name__ == "__main__":
