@@ -1,17 +1,17 @@
-import gpt_2_simple as gpt2
-import os
+
+from aitextgen import aitextgen
+from aitextgen.TokenDataset import TokenDataset
+from aitextgen.tokenizers import train_tokenizer
+from aitextgen.utils import build_gpt2_config
+
 from make_wav_str_file import convert_wav_to_text_file
 
 
 def run_gpt2_script(
     model_name: str = "124M",
-    steps: int = 10,
+    steps: int = 100,
     wav_str_filename: str = "sound.txt"
 ) -> None:
-
-    if not os.path.isdir(os.path.join("models", model_name)):
-        print(f"Downloading {model_name} model...")
-        gpt2.download_gpt2(model_name=model_name)   # model is saved into current directory under /models/124M/
 
     convert_wav_to_text_file(
         in_wav_dir_name="sound_files",
@@ -23,13 +23,21 @@ def run_gpt2_script(
     print(f"steps: {steps}")
     print(f"model_name: {model_name}")
 
-    sess = gpt2.start_tf_sess()
-    gpt2.finetune(sess,
-                  wav_str_filename,
-                  model_name=model_name,
-                  steps=steps)   # steps is max number of training steps
+    train_tokenizer(wav_str_filename)
+    # data = TokenDataset(file_name, block_size=32)  # , vocab_file=vocab_file, merges_file=merges_file
 
-    gpt2.generate(sess)
+    config = build_gpt2_config(
+        vocab_size=len(set(TokenDataset(wav_str_filename, block_size=32).tokens)),
+        max_length=32,
+        dropout=0.0,
+        n_embd=256,
+        n_layer=8,
+        n_head=8,
+    )
+    ai = aitextgen(tokenizer_file="aitextgen.tokenizer.json", config=config)
+
+    ai.train(wav_str_filename, batch_size=16, num_steps=steps)
+    ai.generate(n=100, prompt="")
 
 
 if __name__ == "__main__":
