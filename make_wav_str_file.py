@@ -29,12 +29,12 @@ def convert_wav_to_text_file(
     # # bucketize tokens to avoid having like tens of thousands
     # mass, bins = np.histogram(a=tokens, bins=16)
     # tokens = vec_int_to_hex(ints_data)
-    new_tokens = []
+    new_tokens = ['<endoftext>']
     for file_tokens in ints_data:
-        new_tokens.append('<START>')
+        # new_tokens.append('<START>')
         for token in file_tokens:
             new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
-        new_tokens.append('<END>')
+        new_tokens.append('<endoftext>')
     tokens_str = "".join(map(str, new_tokens))
     with open(out_text_filename, 'w') as f:
         f.write(tokens_str)
