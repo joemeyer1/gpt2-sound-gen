@@ -1,4 +1,5 @@
 
+import fire
 from aitextgen import aitextgen
 
 def generate_text(
@@ -58,4 +59,4 @@ def format_wav_body(hex_text: str) -> str:
 
 
 if __name__ == "__main__":
-    generate_text()
+    fire.Fire(generate_text)
