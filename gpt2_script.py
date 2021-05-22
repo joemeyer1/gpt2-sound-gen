@@ -1,5 +1,6 @@
 
 import os
+import fire
 
 from aitextgen import aitextgen
 from aitextgen.TokenDataset import TokenDataset
@@ -11,10 +12,10 @@ from make_wav_str_file import convert_wav_to_text_file
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def run_gpt2_script(**kwargs) -> None:
-
-    steps: int = kwargs.get("steps", 100)
-    wav_str_filename: str = kwargs.get("wav_str_filename", "sound.txt")
+def run_gpt2_script(
+    steps: int = 100,
+    wav_str_filename: str = "sound.txt",
+) -> None:
 
     convert_wav_to_text_file(
         in_wav_dir_name="sound_files",
@@ -42,4 +43,4 @@ def run_gpt2_script(**kwargs) -> None:
 
 
 if __name__ == "__main__":
-    run_gpt2_script()
+    fire.Fire(run_gpt2_script)
