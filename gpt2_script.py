@@ -14,17 +14,20 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 def run_gpt2_script(
     steps: int = 100,
+    n_max_files: int = 1,
+    in_wav_dir_name: str = "sound_files",
     wav_str_filename: str = "sound.txt",
 ) -> None:
 
+    print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
     convert_wav_to_text_file(
-        in_wav_dir_name="sound_files",
+        in_wav_dir_name=in_wav_dir_name,
         out_text_filename=wav_str_filename,
-        n_max_files=1,
+        n_max_files=n_max_files,
     )
 
-    print(f"Tokenizing file name {wav_str_filename}")
     n_tokens = len(set(TokenDataset(wav_str_filename, block_size=32).tokens))  # can also be arbitrary int, e.g. 1000
+    print(f"Found vocab of size {n_tokens}\n")
     train_tokenizer(wav_str_filename, vocab_size=n_tokens)
 
     config = build_gpt2_config(
@@ -37,7 +40,7 @@ def run_gpt2_script(
     )
     ai = aitextgen(tokenizer_file="aitextgen.tokenizer.json", config=config)
 
-    print(f"Training ({steps} epochs)")
+    print(f"Training ({steps} epochs)\n")
     ai.train(wav_str_filename, batch_size=16, num_steps=steps)
     ai.generate(n=100, prompt="")
 
