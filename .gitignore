@@ -117,6 +117,8 @@ dmypy.json
 checkpoint/*
 models/*M/*
 *tokenizer.json
+trained_model/*
+
 
 .idea/*
 *.DS_Store
