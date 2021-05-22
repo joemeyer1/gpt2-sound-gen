@@ -6,8 +6,8 @@
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
 
-from model_files.data_fetcher import get_training_data
-from vec_to_wav import int_to_hex
+from data_parsing_helpers.data_fetcher import get_training_data
+from data_parsing_helpers.vec_to_wav import int_to_hex
 
 def convert_wav_to_text_file(
         in_wav_dir_name: str = "sound_files",

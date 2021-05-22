@@ -120,7 +120,7 @@ models/*M/*
 trained_model/*
 
 # training data
-sound_files/*
+sound_data/*
 
 
 .idea/*

@@ -7,7 +7,7 @@ from aitextgen.TokenDataset import TokenDataset
 from aitextgen.tokenizers import train_tokenizer
 from aitextgen.utils import build_gpt2_config
 
-from make_wav_str_file import convert_wav_to_text_file
+from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -15,7 +15,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 def run_gpt2_script(
     steps: int = 100,
     n_max_files: int = 1,
-    in_wav_dir_name: str = "sound_files",
+    in_wav_dir_name: str = "sound_data",
     wav_str_filename: str = "sound.txt",
     learning_rate=1e-3,
 ) -> None:

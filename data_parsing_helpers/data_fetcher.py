@@ -5,7 +5,7 @@ import os
 
 import numpy as np
 
-from wav_to_vector import extract_data
+from data_parsing_helpers.wav_to_vector import extract_data
 
 
 def get_training_data(read_wav_from_dir: str, n_max_files: int = 0) -> np.array:
