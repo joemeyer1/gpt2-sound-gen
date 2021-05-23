@@ -1,16 +1,14 @@
 #!usr/bin/env python3
-
-# original code retrieved from https://pypi.org/project/keras-transformer/ under MIT license.
-# If you want to use the original code under the MIT license, download it from the link above.
-
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
+import fire
 
 from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.vec_to_wav import int_to_hex
 
+
 def convert_wav_to_text_file(
-        in_wav_dir_name: str = "sound_files",
+        in_wav_dir_name: str = "sound_data",
         out_text_filename: str = "sound.txt",
         n_max_files: int = 1,
 ) -> None:
@@ -33,3 +31,6 @@ def convert_wav_to_text_file(
     tokens_str = "".join(map(str, new_tokens))
     with open(out_text_filename, 'w') as f:
         f.write(tokens_str)
+
+if __name__ == "__main__":
+    fire.Fire(convert_wav_to_text_file)

@@ -1,3 +1,5 @@
+#!usr/bin/env python3
+# Copyright (c) Joe Meyer (2021). All rights reserved.
 
 import os
 
@@ -6,7 +8,7 @@ from aitextgen import aitextgen
 
 
 def generate_text(
-        model_folder="trained_model",
+        model_folder="trained_model_10k_epochs",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
         min_text_length=10000,
