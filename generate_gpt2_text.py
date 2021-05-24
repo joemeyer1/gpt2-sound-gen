@@ -2,6 +2,9 @@
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
 import os
+from tqdm import tqdm
+
+from typing import Optional
 
 import fire
 from aitextgen import aitextgen
@@ -15,7 +18,7 @@ def generate_wav(
         prompt="",
         min_text_length=10000,
         window_length=16,
-        write_wav_to_filename=None,
+        write_wav_to_filename="trash.wav",
         overwrite_previous_model_data=False,
         num_channels=1,
         sample_rate=48000,
@@ -47,7 +50,6 @@ def generate_text(
         window_length=16,
         write_raw_output_to_filename=None,
         write_clean_output_to_filename=None,
-        write_wav_to_filename=None,
         overwrite_previous_model_data=False,
 ) -> str:
 
@@ -59,8 +61,14 @@ def generate_text(
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
+    t = tqdm(total=min_text_length)
     while len(raw_generated_wav_txt) < min_text_length:
-        raw_generated_wav_txt = raw_generated_wav_txt[:-window_length] + ai.generate(n=1, max_length=512, batch_size=100, prompt=raw_generated_wav_txt[-window_length:], return_as_list=True)[0]#.split('-')[0]
+        generated_text_up_to_prompt = raw_generated_wav_txt[:-window_length]
+        next_generated_text_prompt = raw_generated_wav_txt[-window_length:]
+        next_generated_text = ai.generate(n=1, max_length=512, batch_size=100, prompt=next_generated_text_prompt, return_as_list=True)[0]#.split('-')[0]
+        raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text
+        t.update(len(next_generated_text) - len(next_generated_text_prompt))
+    t.close()
     if write_raw_output_to_filename:
         with open(write_raw_output_to_filename, 'w') as f:
             f.write(raw_generated_wav_txt)
@@ -123,10 +131,24 @@ def format_wav_body(hex_text: str) -> str:
     return wav_body
 
 def make_name_unique(name: str) -> str:
+
+    def get_last_dot_i(name) -> Optional[int]:
+        j_range = list(range(1, len(name)))
+        j_range.reverse()
+        for j in j_range:
+            if name[j] == '.':
+                return j
+        return None
+
+    last_dot_i = get_last_dot_i(name)
+    if last_dot_i:
+        raw_name, ext = name[:last_dot_i], name[last_dot_i:]
+    else:
+        raw_name, ext = name, ''
     i = 0
-    while os.path.exists(name + str(i)):
+    while os.path.exists(raw_name + str(i) + ext):
         i += 1
-    return name + str(i)
+    return raw_name + str(i) + ext
 
 
 if __name__ == "__main__":
