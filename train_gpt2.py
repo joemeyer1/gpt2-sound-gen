@@ -12,6 +12,8 @@ from aitextgen.utils import build_gpt2_config
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 from generate_gpt2_text import generate_text, make_name_unique
 
+from data_parsing_helpers.vec_to_wav import vec_to_wav, write_header
+
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
@@ -21,6 +23,7 @@ def train_gpt2(
     in_wav_dir_name: str = "sound_data",
     wav_str_filename: str = "sound.txt",
     learning_rate=1e-3,
+    load_model_from_chkpt=None,
     overwrite_previous_model=False,
 ) -> None:
 
@@ -31,22 +34,29 @@ def train_gpt2(
         n_max_files=n_max_files,
     )
 
-    n_tokens = len(set(TokenDataset(wav_str_filename, block_size=32).tokens))  # can also be arbitrary int, e.g. 1000
-    print(f"Found vocab of size {n_tokens}\n")
     tokenizer_prefix = "aitextgen"
-    if not overwrite_previous_model:
-        tokenizer_prefix = make_name_unique(tokenizer_prefix)
-    train_tokenizer(wav_str_filename, vocab_size=n_tokens, prefix=tokenizer_prefix)
+    if not load_model_from_chkpt:
+        n_tokens = len(set(TokenDataset(wav_str_filename, block_size=32).tokens))  # can also be arbitrary int, e.g. 1000
+        print(f"Found vocab of size {n_tokens}\n")
+        if not overwrite_previous_model:
+            tokenizer_prefix = make_name_unique(tokenizer_prefix)
+        train_tokenizer(wav_str_filename, vocab_size=n_tokens, prefix=tokenizer_prefix)
 
-    config = build_gpt2_config(
-        vocab_size=n_tokens,
-        max_length=32,
-        dropout=0.0,
-        n_embd=256,
-        n_layer=8,
-        n_head=8,
-    )
-    ai = aitextgen(tokenizer_file=f"{tokenizer_prefix}.tokenizer.json", config=config)
+        config = build_gpt2_config(
+            vocab_size=n_tokens,
+            max_length=32,
+            dropout=0.0,
+            n_embd=256,
+            n_layer=8,
+            n_head=8,
+        )
+        ai = aitextgen(tokenizer_file=f"{tokenizer_prefix}.tokenizer.json", config=config)
+    else:
+        ai = aitextgen(
+            model_folder=load_model_from_chkpt,
+            tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+            to_gpu=False,
+        )
 
     print(f"Training ({steps} epochs) with learning rate {learning_rate}\n")
     output_dir = "trained_model"
