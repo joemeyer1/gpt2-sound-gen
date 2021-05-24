@@ -8,8 +8,8 @@ def file_to_hex_ls(filename):
 
 def get_n_bytes(n, hex_ls, i):
     # get next n bytes after index in in hex_ls
-    n_bytes = hex_ls[i:i+n]
-    i=i+n
+    n_bytes = hex_ls[i: i + n]
+    i = i + n
     return n_bytes, i
 
 def get_n_bytes_int(n, hex_ls, i):
@@ -31,7 +31,7 @@ def hex_str_to_ls(hex_str):
     hex_ls = []
     while i < len(hex_str):
         hex_ls.append(hex_str[i:i+2])
-        i+=2
+        i += 2
     return hex_ls
 
 # helper for get_n_bytes_int()

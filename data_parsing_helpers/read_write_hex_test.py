@@ -13,4 +13,4 @@ def main(read_wav_from_filename):
 
 
 if __name__ == "__main__":
-    main(read_wav_from_filename="sound_files/violin_G4_phrase_forte_harmonic-glissando.wav")
+    main(read_wav_from_filename="../sound_data/violin_G4_phrase_forte_harmonic-glissando.wav")
