@@ -20,18 +20,22 @@ def train_gpt2(
     n_max_files: int = 1,
     in_wav_dir_name: str = "sound_data",
     wav_str_filename: str = "sound.txt",
+    use_previous_training_data: bool = True,
     learning_rate=1e-3,
     load_model_from_chkpt=None,
     save_model_every_n_epochs=1000,
     overwrite_previous_model=False,
 ) -> None:
 
-    print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
-    convert_wav_to_text_file(
-        in_wav_dir_name=in_wav_dir_name,
-        out_text_filename=wav_str_filename,
-        n_max_files=n_max_files,
-    )
+    if use_previous_training_data:
+        assert os.path.exists(wav_str_filename), f"training data {wav_str_filename} not found"
+    else:
+        print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
+        convert_wav_to_text_file(
+            in_wav_dir_name=in_wav_dir_name,
+            out_text_filename=wav_str_filename,
+            n_max_files=n_max_files,
+        )
 
     tokenizer_prefix = "aitextgen"
     if not load_model_from_chkpt:
