@@ -31,6 +31,7 @@ def convert_wav_to_text_file(
                 new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
             new_tokens.append('<endoftext>')
             t.update()
+    print(f"Writing formatted training file to {out_text_filename}")
     tokens_str = "".join(map(str, new_tokens))
     with open(out_text_filename, 'w') as f:
         f.write(tokens_str)
