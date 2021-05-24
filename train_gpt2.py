@@ -29,6 +29,7 @@ def train_gpt2(
 
     if use_previous_training_data:
         assert os.path.exists(wav_str_filename), f"training data {wav_str_filename} not found"
+        print(f"using previous training data file: {wav_str_filename}")
     else:
         print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
         convert_wav_to_text_file(
