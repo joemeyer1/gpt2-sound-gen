@@ -61,14 +61,19 @@ def generate_text(
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
-    t = tqdm(total=min_text_length)
-    while len(raw_generated_wav_txt) < min_text_length:
-        generated_text_up_to_prompt = raw_generated_wav_txt[:-window_length]
-        next_generated_text_prompt = raw_generated_wav_txt[-window_length:]
-        next_generated_text = ai.generate(n=1, max_length=512, batch_size=100, prompt=next_generated_text_prompt, return_as_list=True)[0]#.split('-')[0]
-        raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text
-        t.update(len(next_generated_text) - len(next_generated_text_prompt))
-    t.close()
+    with tqdm(total=min_text_length, desc="generating gpt2 output tokens") as t:
+        while len(raw_generated_wav_txt) < min_text_length:
+            generated_text_up_to_prompt = raw_generated_wav_txt[:-window_length]
+            next_generated_text_prompt = raw_generated_wav_txt[-window_length:]
+            next_generated_text = ai.generate(
+                n=1,
+                max_length=512,
+                batch_size=100,
+                prompt=next_generated_text_prompt,
+                return_as_list=True
+            )[0]#.split('-')[0]
+            raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text
+            t.update(len(next_generated_text) - len(next_generated_text_prompt))
     if write_raw_output_to_filename:
         with open(write_raw_output_to_filename, 'w') as f:
             f.write(raw_generated_wav_txt)
