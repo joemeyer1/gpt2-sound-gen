@@ -18,6 +18,7 @@ def get_training_data(read_wav_from_dir: str, n_max_files: int = 0) -> np.array:
 
     vectors_list = []
     filenames = [f for f in os.listdir(read_wav_from_dir) if f != '.DS_Store']
+    np.random.shuffle(filenames)
     for filename in filenames[-n_max_files:]:
         read_wav_from_path = f"{read_wav_from_dir}/{filename}"
         data_channels, _ = extract_data(read_wav_from_filename=read_wav_from_path)
