@@ -12,8 +12,6 @@ from aitextgen.utils import build_gpt2_config
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 from generate_gpt2_text import generate_text, make_name_unique
 
-from data_parsing_helpers.vec_to_wav import vec_to_wav, write_header
-
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
