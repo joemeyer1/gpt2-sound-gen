@@ -2,6 +2,7 @@
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
 import fire
+from tqdm import tqdm
 
 from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.vec_to_wav import int_to_hex
@@ -23,11 +24,13 @@ def convert_wav_to_text_file(
 
     ints_data = get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files)
     new_tokens = ['<endoftext>']
-    for file_tokens in ints_data:
-        # new_tokens.append('<START>')
-        for token in file_tokens:
-            new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
-        new_tokens.append('<endoftext>')
+    with tqdm(total=len(ints_data), desc="Formatting training data files") as t:
+        for file_tokens in ints_data:
+            # new_tokens.append('<START>')
+            for token in file_tokens:
+                new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
+            new_tokens.append('<endoftext>')
+            t.update()
     tokens_str = "".join(map(str, new_tokens))
     with open(out_text_filename, 'w') as f:
         f.write(tokens_str)
