@@ -103,7 +103,7 @@ def format_wav_body(hex_text: str) -> str:
 
 def make_name_unique(name: str) -> str:
     i = 0
-    while os.path.exists(name):
+    while os.path.exists(name + str(i)):
         i += 1
     return name + str(i)
 
