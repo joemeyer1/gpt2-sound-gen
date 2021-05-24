@@ -56,6 +56,7 @@ def train_gpt2(
         )
         ai = aitextgen(tokenizer_file=f"{tokenizer_prefix}.tokenizer.json", config=config)
     else:
+        print(f"Loading gpt2 model from chkpt: '{load_model_from_chkpt}' with tokenizer: '{tokenizer_prefix}.tokenizer.json'")
         ai = aitextgen(
             model_folder=load_model_from_chkpt,
             tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
