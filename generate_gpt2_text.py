@@ -6,6 +6,8 @@ import os
 import fire
 from aitextgen import aitextgen
 
+from data_parsing_helpers.vec_to_wav import write_header, str_to_hex
+
 
 def generate_text(
         model_folder="trained_model_10k_epochs",
@@ -15,6 +17,7 @@ def generate_text(
         window_length=16,
         write_raw_output_to_filename=None,
         write_clean_output_to_filename=None,
+        write_wav_to_filename=None,
         overwrite_previous_model_data=False,
 ) -> None:
 
@@ -23,6 +26,8 @@ def generate_text(
             write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
         if write_clean_output_to_filename:
             write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
+        if write_wav_to_filename:
+            write_wav_to_filename = make_name_unique(write_wav_to_filename)
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
@@ -42,6 +47,32 @@ def generate_text(
             f.write(clean_generated_wav_txt)
     else:
         print(f"CLEAN:\n{clean_generated_wav_txt}\n")
+
+    header_info = {
+        "num_channels": 1,
+        "sample_rate": 48000,
+        "bits_per_sample": 16,
+    }
+    write_wav(wav_txt=clean_generated_wav_txt, header_info=header_info, out_name=write_wav_to_filename)
+
+def write_wav(wav_txt: str, out_name: str, header_info=None):
+    if not header_info:
+        header_info = {
+            "num_channels": 1,
+            "sample_rate": 48000,
+            "bits_per_sample": 16,
+        }
+    wav_txt = wav_txt.replace(' ', '').replace('\n', '')
+    len_txt = len(wav_txt)
+    header_info['chunk_size'] = (len_txt // 2) + 36
+    header_info['subchunk2size'] = len_txt // 2
+    header_str = write_header(header_info)
+    print(header_str)
+    body_str = str_to_hex(wav_txt)
+    whole_str = header_str + body_str
+    print(whole_str)
+    with open(out_name, 'wb') as f:
+        f.write(whole_str)
 
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
     clean_output = ""
