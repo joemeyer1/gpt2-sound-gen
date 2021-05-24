@@ -24,6 +24,7 @@ def train_gpt2(
     wav_str_filename: str = "sound.txt",
     learning_rate=1e-3,
     load_model_from_chkpt=None,
+    save_model_every_n_epochs=1000,
     overwrite_previous_model=False,
 ) -> None:
 
@@ -68,6 +69,7 @@ def train_gpt2(
         learning_rate=learning_rate,
         batch_size=16,
         output_dir=output_dir,
+        save_every=save_model_every_n_epochs,
     )
 
     generate_text(
