@@ -39,6 +39,7 @@ def generate_wav(
     }
     if not overwrite_previous_model_data:
         write_wav_to_filename = make_name_unique(write_wav_to_filename)
+    print(f"writing wav file '{write_wav_to_filename}'")
     write_wav(wav_txt=clean_generated_wav_txt, write_wav_to_filename=write_wav_to_filename, header_info=header_info)
 
 
@@ -75,6 +76,7 @@ def generate_text(
             raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text
             t.update(len(next_generated_text) - len(next_generated_text_prompt))
     if write_raw_output_to_filename:
+        print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:
             f.write(raw_generated_wav_txt)
     else:
@@ -84,6 +86,7 @@ def generate_text(
     clean_generated_wav_txt = format_wav_body(hex_text=clean_generated_wav_txt)
     if write_clean_output_to_filename:
         with open(write_clean_output_to_filename, 'w') as f:
+            print(f"writing clean output to file '{write_clean_output_to_filename}'")
             f.write(clean_generated_wav_txt)
     else:
         print(f"CLEAN:\n{clean_generated_wav_txt}\n")
