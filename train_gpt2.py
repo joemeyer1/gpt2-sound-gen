@@ -10,7 +10,7 @@ from aitextgen.tokenizers import train_tokenizer
 from aitextgen.utils import build_gpt2_config
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
-from generate_gpt2_text import generate_text, make_name_unique
+from generate_gpt2_text import generate_wav, make_name_unique
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -70,27 +70,45 @@ def train_gpt2(
         save_every=save_model_every_n_epochs,
     )
 
-    generate_text(
+    generate_wav(
         model_folder=output_dir,
         tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
         prompt="",
         min_text_length=100,
         window_length=16,
-        write_raw_output_to_filename=None,
-        write_clean_output_to_filename=None,
         overwrite_previous_model_data=overwrite_previous_model,
     )
 
-    generate_text(
+    generate_wav(
         model_folder=output_dir,
         tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
         prompt="",
         min_text_length=10000,
         window_length=16,
-        write_raw_output_to_filename="raw_generated_unformatted_wav.txt",
-        write_clean_output_to_filename="clean_generated_formatted_hex_str.txt",
         overwrite_previous_model_data=overwrite_previous_model,
     )
+
+    # generate_text(
+    #     model_folder=output_dir,
+    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+    #     prompt="",
+    #     min_text_length=100,
+    #     window_length=16,
+    #     write_raw_output_to_filename=None,
+    #     write_clean_output_to_filename=None,
+    #     overwrite_previous_model_data=overwrite_previous_model,
+    # )
+    #
+    # generate_text(
+    #     model_folder=output_dir,
+    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+    #     prompt="",
+    #     min_text_length=10000,
+    #     window_length=16,
+    #     write_raw_output_to_filename="raw_generated_unformatted_wav.txt",
+    #     write_clean_output_to_filename="clean_generated_formatted_hex_str.txt",
+    #     overwrite_previous_model_data=overwrite_previous_model,
+    # )
 
 
 if __name__ == "__main__":

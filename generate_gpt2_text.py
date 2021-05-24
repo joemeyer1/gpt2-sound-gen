@@ -9,6 +9,36 @@ from aitextgen import aitextgen
 from data_parsing_helpers.vec_to_wav import write_header, str_to_hex
 
 
+def generate_wav(
+        model_folder="trained_model_10k_epochs",
+        tokenizer_file="aitextgen.tokenizer.json",
+        prompt="",
+        min_text_length=10000,
+        window_length=16,
+        write_wav_to_filename=None,
+        overwrite_previous_model_data=False,
+        num_channels=1,
+        sample_rate=48000,
+        bits_per_sample=16,
+) -> None:
+    clean_generated_wav_txt = generate_text(
+        model_folder=model_folder,
+        tokenizer_file=tokenizer_file,
+        prompt=prompt,
+        min_text_length=min_text_length,
+        window_length=window_length,
+        overwrite_previous_model_data=overwrite_previous_model_data,
+    )
+    header_info = {
+        "num_channels": num_channels,
+        "sample_rate": sample_rate,
+        "bits_per_sample": bits_per_sample,
+    }
+    if not overwrite_previous_model_data:
+        write_wav_to_filename = make_name_unique(write_wav_to_filename)
+    write_wav(wav_txt=clean_generated_wav_txt, write_wav_to_filename=write_wav_to_filename, header_info=header_info)
+
+
 def generate_text(
         model_folder="trained_model_10k_epochs",
         tokenizer_file="aitextgen.tokenizer.json",
@@ -19,15 +49,13 @@ def generate_text(
         write_clean_output_to_filename=None,
         write_wav_to_filename=None,
         overwrite_previous_model_data=False,
-) -> None:
+) -> str:
 
     if overwrite_previous_model_data:
         if write_raw_output_to_filename:
             write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
         if write_clean_output_to_filename:
             write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
-        if write_wav_to_filename:
-            write_wav_to_filename = make_name_unique(write_wav_to_filename)
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
@@ -41,21 +69,14 @@ def generate_text(
     clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
 
     clean_generated_wav_txt = format_wav_body(hex_text=clean_generated_wav_txt)
-    # TODO: write this sound data as a .wav file - figure out how to find + write header info
     if write_clean_output_to_filename:
         with open(write_clean_output_to_filename, 'w') as f:
             f.write(clean_generated_wav_txt)
     else:
         print(f"CLEAN:\n{clean_generated_wav_txt}\n")
+    return clean_generated_wav_txt
 
-    header_info = {
-        "num_channels": 1,
-        "sample_rate": 48000,
-        "bits_per_sample": 16,
-    }
-    write_wav(wav_txt=clean_generated_wav_txt, header_info=header_info, out_name=write_wav_to_filename)
-
-def write_wav(wav_txt: str, out_name: str, header_info=None):
+def write_wav(wav_txt: str, write_wav_to_filename: str, header_info=None):
     if not header_info:
         header_info = {
             "num_channels": 1,
@@ -71,7 +92,7 @@ def write_wav(wav_txt: str, out_name: str, header_info=None):
     body_str = str_to_hex(wav_txt)
     whole_str = header_str + body_str
     print(whole_str)
-    with open(out_name, 'wb') as f:
+    with open(write_wav_to_filename, 'wb') as f:
         f.write(whole_str)
 
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
@@ -109,4 +130,4 @@ def make_name_unique(name: str) -> str:
 
 
 if __name__ == "__main__":
-    fire.Fire(generate_text)
+    fire.Fire(generate_wav)
