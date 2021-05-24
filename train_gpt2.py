@@ -63,10 +63,10 @@ def train_gpt2(
             to_gpu=False,
         )
 
-    print(f"Training ({steps} epochs) with learning rate {learning_rate}\n")
     output_dir = "trained_model"
     if not overwrite_previous_model:
         output_dir = make_name_unique(output_dir)
+    print(f"Training {steps} epochs with learning rate {learning_rate} and save path {output_dir}\n")
     ai.train(
         train_data=wav_str_filename,
         num_steps=steps,
