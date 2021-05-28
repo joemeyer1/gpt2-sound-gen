@@ -38,9 +38,10 @@ def train_gpt2(
             n_max_files=n_max_files,
         )
 
-    tokenizer_prefix = "aitextgen"
+    tokenizer_prefix = "aitextgen00"
     if not load_model_from_chkpt:
-        n_tokens = len(set(TokenDataset(wav_str_filename, block_size=32).tokens))  # can also be arbitrary int, e.g. 1000
+        block_size = 64
+        n_tokens = len(set(TokenDataset(wav_str_filename, block_size=block_size).tokens))  # can also be arbitrary int, e.g. 1000
         print(f"Found vocab of size {n_tokens}\n")
         if not overwrite_previous_model:
             tokenizer_prefix = make_name_unique(tokenizer_prefix)
@@ -48,12 +49,13 @@ def train_gpt2(
 
         config = build_gpt2_config(
             vocab_size=n_tokens,
-            max_length=32,
+            max_length=block_size,
             dropout=0.0,
             n_embd=256,
             n_layer=8,
             n_head=8,
         )
+        print(f"building model with config {config}")
         ai = aitextgen(tokenizer_file=f"{tokenizer_prefix}.tokenizer.json", config=config)
     else:
         print(f"Loading gpt2 model from chkpt: '{load_model_from_chkpt}' with tokenizer: '{tokenizer_prefix}.tokenizer.json'")
