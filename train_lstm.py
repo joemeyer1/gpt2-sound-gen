@@ -53,7 +53,7 @@ def train_lstm(
             optimizer.zero_grad()
             y_pred, _ = net(features)
             loss = loss_fn(y_pred, labels)
-            print(f"loss: {loss}\n")
+            print(f"epoch {i} loss: {loss}\n")
             loss.backward()
             optimizer.step()
     except Exception as e:
