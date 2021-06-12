@@ -12,8 +12,8 @@ class LSTMWithHead(nn.Module):
         self.lstm_layer = nn.LSTM(input_size=self.input_size, hidden_size=self.hidden_size, num_layers=self.num_layers)
         self.linear_layer = nn.Linear(self.hidden_size, self.output_size)
 
-    def forward(self, x):
-        xn, (hn, cn) = self.lstm_layer(x)
+    def forward(self, x, hncn=None):
+        xn, (hn, cn) = self.lstm_layer(x, hncn)
         out = self.linear_layer(xn)
-        return out
+        return out, (hn, cn)
 
