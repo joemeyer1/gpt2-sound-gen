@@ -77,14 +77,12 @@ def train_lstm(
 
     try:
         for i in range(epochs):
+            epoch_loss = 0
             for features_batch, labels_batch in zip(features, labels):
-            # for batch_i in range(len(features)):
-            #     features_batch = features[batch_i]
-            #     labels_batch = labels[batch_i]
                 optimizer.zero_grad()
                 y_pred, _ = net(features_batch)
                 loss = loss_fn(y_pred, labels_batch)
-                print(f"epoch {i} loss: {loss}\n")
+                epoch_loss += loss
                 if i > 0:
                     if i % save_model_every_n_epochs == 0:
                         print(f"Saving model {save_model_to_chkpt}")
@@ -98,6 +96,7 @@ def train_lstm(
                         )
                 loss.backward()
                 optimizer.step()
+            print(f"epoch {i} loss: {epoch_loss / n_batches}\n")
     except KeyboardInterrupt:
         print(f"Training interrupted")
     print(f"Saving model {save_model_to_chkpt}")
