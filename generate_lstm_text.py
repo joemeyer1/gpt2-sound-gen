@@ -7,22 +7,14 @@ from data_parsing_helpers.data_fetcher import get_training_data
 # from data_parsing_helpers.vec_to_wav import int_to_hex
 from generate_gpt2_text import write_wav
 
-def train_lstm(
-    epochs: int = 10,
-    n_max_files: int = 1,
-    in_wav_dir_name: str = "sound_data_percussion",
+def gen_wav_with_lstm(
     write_wav_to_filename="generated_drums.wav",
-    wav_str_filename: str = "sound_short.txt",
-    use_previous_training_data: bool = True,
-    learning_rate=.01,
     output_wav_len=100,
-    load_model_from_chkpt=None,
-    save_model_every_n_epochs=5,
-    overwrite_previous_model=False,
+    load_model_from_chkpt='lstm.pt',
 ):
 
     # get net
-    net = torch.load('lstm.pt')
+    net = torch.load(load_model_from_chkpt)
 
     # generate wav
     generated_wav_body = torch.tensor([[[0]]], dtype=torch.float)
@@ -50,4 +42,4 @@ def train_lstm(
 
 
 if __name__ == "__main__":
-    fire.Fire(train_lstm)
+    fire.Fire(gen_wav_with_lstm)
