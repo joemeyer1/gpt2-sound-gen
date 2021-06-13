@@ -5,13 +5,18 @@ import torch
 from math import floor
 from data_parsing_helpers.data_fetcher import get_training_data
 # from data_parsing_helpers.vec_to_wav import int_to_hex
-from generate_gpt2_text import write_wav
+from generate_gpt2_text import write_wav, make_name_unique
 
 def gen_wav_with_lstm(
     write_wav_to_filename="generated_drums.wav",
+    overwrite_wav=False,
     output_wav_len=100,
     load_model_from_chkpt='lstm.pt',
 ):
+
+    if not overwrite_wav:
+        write_wav_to_filename = make_name_unique(write_wav_to_filename)
+    print(f"Writing wav to {write_wav_to_filename}")
 
     net = torch.load(load_model_from_chkpt)
 
