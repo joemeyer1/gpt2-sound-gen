@@ -17,6 +17,7 @@ def train_lstm(
     learning_rate=.01,
     output_wav_len=100,
     load_model_from_chkpt=None,
+    save_model_to_chkpt='lstm.pt',
     save_model_every_n_epochs=5,
     overwrite_previous_model=False,
 ):
@@ -69,18 +70,18 @@ def train_lstm(
             loss = loss_fn(y_pred, labels)
             print(f"epoch {i} loss: {loss}\n")
             if i > 0 and i % save_model_every_n_epochs == 0:
-                print("Saving model")
-                torch.save(net, 'lstm.pt')
+                print(f"Saving model {save_model_to_chkpt}")
+                torch.save(net, save_model_to_chkpt)
             loss.backward()
             optimizer.step()
-        torch.save(net, 'lstm.pt')
+        torch.save(net, save_model_to_chkpt)
     except Exception as e:
         print(e)
 
     gen_wav_with_lstm(
         write_wav_to_filename=write_wav_to_filename,
         output_wav_len=output_wav_len,
-        load_model_from_chkpt='lstm.pt',
+        load_model_from_chkpt=save_model_to_chkpt,
     )
 
 
