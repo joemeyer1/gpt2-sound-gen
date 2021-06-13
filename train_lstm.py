@@ -28,9 +28,6 @@ def train_lstm(
 ):
 
     # get data
-    output_size = 1
-    hidden_size = 32
-    num_layers = 2
     data = torch.tensor(np.expand_dims(get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files), -1).astype(np.float32))
     n_files = data.shape[0]
     assert batch_size > 0
@@ -51,9 +48,10 @@ def train_lstm(
 
     features = data[:, :-1]
     labels = data[:, 1:]
-    input_size = features.shape[-1]
 
     # get net
+    hidden_size = 32
+    num_layers = 2
     if load_model_from_chkpt:
         print(f"loading model from chkpt: {load_model_from_chkpt}\n")
         net = torch.load(load_model_from_chkpt)
@@ -62,8 +60,8 @@ def train_lstm(
     else:
         print("creating new net\n")
         net = LSTMWithHead(
-            input_size=input_size,
-            output_size=output_size,
+            input_size=1,
+            output_size=1,
             hidden_size=hidden_size,
             num_layers=num_layers,
             std_for_decoding=data_std,
