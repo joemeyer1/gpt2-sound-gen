@@ -114,14 +114,20 @@ dmypy.json
 .pyre/
 
 # model data
+#   gpt2
 checkpoint/*
 models/*M/*
 *tokenizer.json
 trained_model/*
+#   lstm
 *.pt
 
-# training data
-sound_data*/*
+# wav data
+sound_data_percussion
+sound_data_strings
+sound*.txt
+*data_channels*
+generated*.wav
 
 
 .idea/*
