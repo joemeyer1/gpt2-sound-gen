@@ -56,10 +56,10 @@ def train_lstm(
         net.std_for_decoding = data_std
         net.mean_for_decoding = data_avg
     else:
-        hidden_size = 32
-        num_layers = 2
-        activation = torch.nn.ReLU()
-        print(f"creating new net with {num_layers} layers, hidden_size {hidden_size}, and activation {activation}\n")
+        hidden_size = 128
+        num_layers = 4
+        activation = torch.nn.Tanh()
+        print(f"creating new net\n\tnum_layers: '{num_layers}'\n\thidden_size: '{hidden_size}'\n\tactivation '{activation}'\n")
         net = LSTMWithHead(
             input_size=1,
             output_size=1,
@@ -98,7 +98,7 @@ def train_lstm(
             print("Epoch {} Avg Loss: {}\n".format(epoch_i, epoch_loss))
             # save model
             if epoch_i % save_model_every_n_epochs == 0:
-                print(f"\tSaving model {save_model_to_chkpt}\n")
+                print(f"\tSaving model '{save_model_to_chkpt}'\n")
                 torch.save(net, save_model_to_chkpt)
             # generate wav sample
             if epoch_i % generate_wav_every_n_epochs == 0:
