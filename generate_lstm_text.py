@@ -21,19 +21,6 @@ def train_lstm(
     overwrite_previous_model=False,
 ):
 
-
-
-    # get data
-    data = torch.tensor(np.expand_dims(get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files), -1).astype(np.float32))
-
-    # normalize data
-    data_std = torch.std(input=data, axis=0)
-    data_std[data_std == 0] = 1
-    data_avg = torch.mean(input=data, axis=0)
-    data = (data - data_avg) / data_std
-
-    features = data[:, :-1]
-
     # get net
     net = torch.load('lstm.pt')
 
