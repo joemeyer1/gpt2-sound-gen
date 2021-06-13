@@ -3,7 +3,6 @@ import fire
 import numpy as np
 import torch
 from math import floor
-from lstm_with_head import LSTMWithHead as LSTMWithHead
 from data_parsing_helpers.data_fetcher import get_training_data
 # from data_parsing_helpers.vec_to_wav import int_to_hex
 from generate_gpt2_text import write_wav
@@ -22,17 +21,10 @@ def train_lstm(
     overwrite_previous_model=False,
 ):
 
+
+
     # get data
-    input_size = 1
-    output_size = 1
-    hidden_size = 64
-    num_layers = 4
-    # batch_size = 1
-    # seq_length = 5
-    # features = torch.randn(seq_length, batch_size, input_size)
-    # labels = torch.cat((features[1:], torch.tensor([[[5]]])), 0)
     data = torch.tensor(np.expand_dims(get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files), -1).astype(np.float32))
-    # data = torch.tensor([[[1], [2], [3], [4]]]).float()
 
     # normalize data
     data_std = torch.std(input=data, axis=0)
@@ -45,32 +37,10 @@ def train_lstm(
     batch_size, seq_length, input_size = features.shape
 
     # get net
-    net = LSTMWithHead(
-        input_size=input_size,
-        output_size=output_size,
-        hidden_size=hidden_size,
-        num_layers=num_layers,
-        std_for_decoding=torch.mean(data_std),
-        mean_for_decoding=torch.mean(data_avg),
+    net = torch.load('lstm.pt')
+    net
 
-    )
-    optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
-    loss_fn = torch.nn.MSELoss()
-
-    try:
-        for i in range(epochs):
-            optimizer.zero_grad()
-            y_pred, _ = net(features)
-            loss = loss_fn(y_pred, labels)
-            print(f"epoch {i} loss: {loss}\n")
-            if i > 0 and i % save_model_every_n_epochs == 0:
-                print("Saving model")
-                torch.save(net, 'lstm.pt')
-            loss.backward()
-            optimizer.step()
-    except Exception as e:
-        print(e)
-
+    # generate wav
     generated_wav_body = torch.tensor([[[0]]], dtype=torch.float)
     hncn = None
     for i in range(output_wav_len - 1):
@@ -93,7 +63,6 @@ def train_lstm(
 
     print(f"writing wav file '{write_wav_to_filename}'")
     write_wav(wav_txt=wav_body, write_wav_to_filename=write_wav_to_filename)
-    torch.save(net, 'lstm.pt')
 
 
 if __name__ == "__main__":
