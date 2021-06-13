@@ -12,6 +12,7 @@ from generate_lstm_text import gen_wav_with_lstm
 def train_lstm(
     epochs: int = 10,
     n_max_files: int = 1,
+    batch_size: int = 1,
     in_wav_dir_name: str = "sound_data_percussion",
     write_wav_to_filename="generated_drums.wav",
     learning_rate=.01,
@@ -19,16 +20,23 @@ def train_lstm(
     load_model_from_chkpt=None,
     save_model_to_chkpt='lstm.pt',
     save_model_every_n_epochs=5,
+    generate_wav_every_n_epochs=20,
     overwrite_previous_model=False,
+    overwrite_wav=False,
 ):
 
     # get data
-    input_size = 1
     output_size = 1
-    hidden_size = 64
-    num_layers = 4
-    # batch_size = 1
+    hidden_size = 32
+    num_layers = 2
     data = torch.tensor(np.expand_dims(get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files), -1).astype(np.float32))
+    n_files = data.shape[0]
+    assert batch_size > 0
+    while n_files % batch_size > 0:
+        batch_size -= 1
+    n_batches = n_files // batch_size
+    batched_data_shape = [n_batches, batch_size] + list(data.shape[1:])
+    data = data.reshape(batched_data_shape)
 
     # normalize data
     data_std = torch.std(input=data)
@@ -41,7 +49,7 @@ def train_lstm(
 
     features = data[:, :-1]
     labels = data[:, 1:]
-    batch_size, seq_length, input_size = features.shape
+    input_size = features.shape[-1]
 
     # get net
     if load_model_from_chkpt:
@@ -65,18 +73,31 @@ def train_lstm(
 
     if not overwrite_previous_model:
         save_model_to_chkpt = make_name_unique(save_model_to_chkpt)
+    print(f"Model will be saved to '{save_model_to_chkpt}'")
 
     try:
         for i in range(epochs):
-            optimizer.zero_grad()
-            y_pred, _ = net(features)
-            loss = loss_fn(y_pred, labels)
-            print(f"epoch {i} loss: {loss}\n")
-            if i > 0 and i % save_model_every_n_epochs == 0:
-                print(f"Saving model {save_model_to_chkpt}")
-                torch.save(net, save_model_to_chkpt)
-            loss.backward()
-            optimizer.step()
+            for features_batch, labels_batch in zip(features, labels):
+            # for batch_i in range(len(features)):
+            #     features_batch = features[batch_i]
+            #     labels_batch = labels[batch_i]
+                optimizer.zero_grad()
+                y_pred, _ = net(features_batch)
+                loss = loss_fn(y_pred, labels_batch)
+                print(f"epoch {i} loss: {loss}\n")
+                if i > 0:
+                    if i % save_model_every_n_epochs == 0:
+                        print(f"Saving model {save_model_to_chkpt}")
+                        torch.save(net, save_model_to_chkpt)
+                    if i % generate_wav_every_n_epochs == 0:
+                        gen_wav_with_lstm(
+                            write_wav_to_filename=write_wav_to_filename,
+                            overwrite_wav=overwrite_wav,
+                            output_wav_len=output_wav_len,
+                            load_model_from_chkpt=save_model_to_chkpt,
+                        )
+                loss.backward()
+                optimizer.step()
     except KeyboardInterrupt:
         print(f"Training interrupted")
     print(f"Saving model {save_model_to_chkpt}")
@@ -84,6 +105,7 @@ def train_lstm(
 
     gen_wav_with_lstm(
         write_wav_to_filename=write_wav_to_filename,
+        overwrite_wav=overwrite_wav,
         output_wav_len=output_wav_len,
         load_model_from_chkpt=save_model_to_chkpt,
     )
