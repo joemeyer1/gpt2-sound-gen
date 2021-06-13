@@ -35,25 +35,24 @@ def train_lstm(
     # data = torch.tensor([[[1], [2], [3], [4]]]).float()
 
     # normalize data
-    data_std = torch.std(input=data, axis=0)
-    data_std[data_std == 0] = 1
-    data_avg = torch.mean(input=data, axis=0)
+    data_std = torch.mean(torch.std(input=data, axis=0))
+    if data_std == 0:
+        data_std = torch.tensor(1, dtype=torch.float)
+    data_avg = torch.mean(torch.mean(input=data, axis=0))
     data = (data - data_avg) / data_std
+    print(f"data_std: {data_std}")
+    print(f"data_avg: {data_avg}")
 
     features = data[:, :-1]
     labels = data[:, 1:]
     batch_size, seq_length, input_size = features.shape
 
     # get net
-    std_for_decoding = torch.mean(data_std)
-    mean_for_decoding = torch.mean(data_avg)
-    print(f"std_for_decoding: {std_for_decoding}")
-    print(f"mean_for_decoding: {mean_for_decoding}")
     if load_model_from_chkpt:
         print(f"loading model from chkpt: {load_model_from_chkpt}")
         net = torch.load(load_model_from_chkpt)
-        net.std_for_decoding = std_for_decoding
-        net.mean_for_decoding = mean_for_decoding
+        net.std_for_decoding = data_std
+        net.mean_for_decoding = data_avg
     else:
         print("creating new net")
         net = LSTMWithHead(
@@ -61,8 +60,8 @@ def train_lstm(
             output_size=output_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
-            std_for_decoding=std_for_decoding,
-            mean_for_decoding=mean_for_decoding,
+            std_for_decoding=data_std,
+            mean_for_decoding=data_avg,
 
         )
     optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
