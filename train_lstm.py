@@ -83,19 +83,18 @@ def train_lstm(
                 y_pred, _ = net(features_batch)
                 loss = loss_fn(y_pred, labels_batch)
                 epoch_loss += loss
-                if i > 0:
-                    if i % save_model_every_n_epochs == 0:
-                        print(f"Saving model {save_model_to_chkpt}")
-                        torch.save(net, save_model_to_chkpt)
-                    if i % generate_wav_every_n_epochs == 0:
-                        gen_wav_with_lstm(
-                            write_wav_to_filename=write_wav_to_filename,
-                            overwrite_wav=overwrite_wav,
-                            output_wav_len=output_wav_len,
-                            load_model_from_chkpt=save_model_to_chkpt,
-                        )
                 loss.backward()
                 optimizer.step()
+            if i % save_model_every_n_epochs == 0:
+                print(f"Saving model {save_model_to_chkpt}")
+                torch.save(net, save_model_to_chkpt)
+            if i % generate_wav_every_n_epochs == 0:
+                gen_wav_with_lstm(
+                    write_wav_to_filename=write_wav_to_filename,
+                    overwrite_wav=overwrite_wav,
+                    output_wav_len=output_wav_len,
+                    load_model_from_chkpt=save_model_to_chkpt,
+                )
             print(f"epoch {i} loss: {epoch_loss / n_batches}\n")
     except KeyboardInterrupt:
         print(f"Training interrupted")
