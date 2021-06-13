@@ -45,15 +45,26 @@ def train_lstm(
     batch_size, seq_length, input_size = features.shape
 
     # get net
-    net = LSTMWithHead(
-        input_size=input_size,
-        output_size=output_size,
-        hidden_size=hidden_size,
-        num_layers=num_layers,
-        std_for_decoding=torch.mean(data_std),
-        mean_for_decoding=torch.mean(data_avg),
+    std_for_decoding = torch.mean(data_std)
+    mean_for_decoding = torch.mean(data_avg)
+    print(f"std_for_decoding: {std_for_decoding}")
+    print(f"mean_for_decoding: {mean_for_decoding}")
+    if load_model_from_chkpt:
+        print(f"loading model from chkpt: {load_model_from_chkpt}")
+        net = torch.load(load_model_from_chkpt)
+        net.std_for_decoding = std_for_decoding
+        net.mean_for_decoding = mean_for_decoding
+    else:
+        print("creating new net")
+        net = LSTMWithHead(
+            input_size=input_size,
+            output_size=output_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            std_for_decoding=std_for_decoding,
+            mean_for_decoding=mean_for_decoding,
 
-    )
+        )
     optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
     loss_fn = torch.nn.MSELoss()
 
