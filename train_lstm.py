@@ -77,9 +77,10 @@ def train_lstm(
                 torch.save(net, save_model_to_chkpt)
             loss.backward()
             optimizer.step()
-        torch.save(net, save_model_to_chkpt)
-    except Exception as e:
-        print(f"Training interrupted: {e}")
+    except KeyboardInterrupt:
+        print(f"Training interrupted")
+    print(f"Saving model {save_model_to_chkpt}")
+    torch.save(net, save_model_to_chkpt)
 
     gen_wav_with_lstm(
         write_wav_to_filename=write_wav_to_filename,
