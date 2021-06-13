@@ -6,7 +6,7 @@ from math import floor
 from lstm_with_head import LSTMWithHead as LSTMWithHead
 from data_parsing_helpers.data_fetcher import get_training_data
 # from data_parsing_helpers.vec_to_wav import int_to_hex
-from generate_gpt2_text import write_wav
+from generate_gpt2_text import make_name_unique
 from generate_lstm_text import gen_wav_with_lstm
 
 def train_lstm(
@@ -63,6 +63,9 @@ def train_lstm(
     optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
     loss_fn = torch.nn.MSELoss()
 
+    if not overwrite_previous_model:
+        save_model_to_chkpt = make_name_unique(save_model_to_chkpt)
+
     try:
         for i in range(epochs):
             optimizer.zero_grad()
@@ -76,7 +79,7 @@ def train_lstm(
             optimizer.step()
         torch.save(net, save_model_to_chkpt)
     except Exception as e:
-        print(e)
+        print(f"Training interrupted: {e}")
 
     gen_wav_with_lstm(
         write_wav_to_filename=write_wav_to_filename,
