@@ -33,12 +33,9 @@ def train_lstm(
     data = (data - data_avg) / data_std
 
     features = data[:, :-1]
-    labels = data[:, 1:]
-    batch_size, seq_length, input_size = features.shape
 
     # get net
     net = torch.load('lstm.pt')
-    net
 
     # generate wav
     generated_wav_body = torch.tensor([[[0]]], dtype=torch.float)
