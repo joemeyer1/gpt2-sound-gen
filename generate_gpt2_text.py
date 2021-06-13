@@ -92,7 +92,7 @@ def generate_text(
         print(f"CLEAN:\n{clean_generated_wav_txt}\n")
     return clean_generated_wav_txt
 
-def write_wav(wav_txt: str, write_wav_to_filename: str, header_info=None):
+def write_wav(wav_txt: str, write_wav_to_filename: str, header_info=None, verbose=False):
     if not header_info:
         header_info = {
             "num_channels": 1,
@@ -104,10 +104,12 @@ def write_wav(wav_txt: str, write_wav_to_filename: str, header_info=None):
     header_info['chunk_size'] = (len_txt // 2) + 36
     header_info['subchunk2size'] = len_txt // 2
     header_str = write_header(header_info)
-    print(header_str)
+    if verbose:
+        print(header_str)
     body_str = str_to_hex(wav_txt)
     whole_str = header_str + body_str
-    print(whole_str)
+    if verbose:
+        print(whole_str)
     with open(write_wav_to_filename, 'wb') as f:
         f.write(whole_str)
 

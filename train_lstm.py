@@ -73,7 +73,6 @@ def train_lstm(
 
     if not overwrite_previous_model:
         save_model_to_chkpt = make_name_unique(save_model_to_chkpt)
-    print(f"Model will be saved to '{save_model_to_chkpt}'")
 
     try:
         for i in range(epochs):
@@ -85,6 +84,7 @@ def train_lstm(
                 epoch_loss += loss
                 loss.backward()
                 optimizer.step()
+            print(f"epoch {i} loss: {epoch_loss / n_batches}\n")
             if i % save_model_every_n_epochs == 0:
                 print(f"Saving model {save_model_to_chkpt}")
                 torch.save(net, save_model_to_chkpt)
@@ -95,7 +95,6 @@ def train_lstm(
                     output_wav_len=output_wav_len,
                     load_model_from_chkpt=save_model_to_chkpt,
                 )
-            print(f"epoch {i} loss: {epoch_loss / n_batches}\n")
     except KeyboardInterrupt:
         print(f"Training interrupted")
     print(f"Saving model {save_model_to_chkpt}")
