@@ -50,15 +50,16 @@ def train_lstm(
     labels = data[:, 1:]
 
     # get net
-    hidden_size = 32
-    num_layers = 2
     if load_model_from_chkpt:
         print(f"loading model from chkpt: {load_model_from_chkpt}\n")
         net = torch.load(load_model_from_chkpt)
         net.std_for_decoding = data_std
         net.mean_for_decoding = data_avg
     else:
-        print("creating new net\n")
+        hidden_size = 32
+        num_layers = 2
+        activation = torch.nn.ReLU()
+        print(f"creating new net with {num_layers} layers, hidden_size {hidden_size}, and activation {activation}\n")
         net = LSTMWithHead(
             input_size=1,
             output_size=1,
@@ -66,7 +67,7 @@ def train_lstm(
             num_layers=num_layers,
             std_for_decoding=data_std,
             mean_for_decoding=data_avg,
-            activation=torch.nn.ReLU(),
+            activation=activation,
         )
     optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
     loss_fn = torch.nn.MSELoss()
