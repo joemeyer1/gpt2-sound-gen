@@ -66,7 +66,7 @@ def train_lstm(
             num_layers=num_layers,
             std_for_decoding=data_std,
             mean_for_decoding=data_avg,
-
+            activation=torch.nn.ReLU(),
         )
     optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
     loss_fn = torch.nn.MSELoss()
