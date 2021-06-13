@@ -13,7 +13,6 @@ def gen_wav_with_lstm(
     load_model_from_chkpt='lstm.pt',
 ):
 
-    # get net
     net = torch.load(load_model_from_chkpt)
 
     # generate wav
@@ -22,7 +21,7 @@ def gen_wav_with_lstm(
     for i in range(output_wav_len - 1):
         next_input = generated_wav_body[-1:]
         y_pred, hncn = net(next_input, hncn)
-        generated_wav_body = torch.cat((generated_wav_body, y_pred[-1:]), axis=0)
+        generated_wav_body = torch.cat((generated_wav_body, y_pred[-1:]))
     print(generated_wav_body)
     generated_wav_body = net.decode_output(generated_wav_body)
     print(generated_wav_body)
