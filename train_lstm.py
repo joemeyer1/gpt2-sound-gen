@@ -55,12 +55,12 @@ def train_lstm(
 
     # get net
     if load_model_from_chkpt:
-        print(f"loading model from chkpt: {load_model_from_chkpt}")
+        print(f"loading model from chkpt: {load_model_from_chkpt}\n")
         net = torch.load(load_model_from_chkpt)
         net.std_for_decoding = data_std
         net.mean_for_decoding = data_avg
     else:
-        print("creating new net")
+        print("creating new net\n")
         net = LSTMWithHead(
             input_size=input_size,
             output_size=output_size,
@@ -77,45 +77,38 @@ def train_lstm(
         save_model_to_chkpt = make_name_unique(save_model_to_chkpt)
 
     try:
-        with tqdm(range(epochs)) as epoch_counter:
-            tot_loss = 0.
-            for epoch_i in epoch_counter:
-                tot_batch_loss = 0
-                epoch_loss = 0
-                with tqdm(range(n_batches), leave=False) as batch_counter:
-                    for batch_i in batch_counter:
-                        features_batch = features[batch_i]
-                        labels_batch = labels[batch_i]
-                        optimizer.zero_grad()
-                        y_pred, _ = net(features_batch)
-                        loss = loss_fn(y_pred, labels_batch)
-                        epoch_loss += loss
-                        loss.backward()
-                        optimizer.step()
-                        tot_batch_loss += loss.item()
-                        running_loss = tot_batch_loss / float(batch_i + 1)
-                        batch_counter.desc = "Epoch {} Loss: {}".format(epoch_i, running_loss)
-                    batch_counter.close()
-                # report loss
-                tot_loss += tot_batch_loss
-                avg_loss = tot_loss / ((epoch_i + 1) * n_batches)
-                epoch_loss = tot_batch_loss / float(n_batches)
-                epoch_counter.write(" Epoch {} Avg Loss: {}\n".format(epoch_i, epoch_loss))
-                epoch_counter.desc = "Total Loss: " + str(avg_loss)
-                # save model
-                # print()  # print linebreak
-                if epoch_i % save_model_every_n_epochs == 0:
-                    print(f"\nSaving model {save_model_to_chkpt}")
-                    torch.save(net, save_model_to_chkpt)
-                # generate wav sample
-                if epoch_i % generate_wav_every_n_epochs == 0:
-                    gen_wav_with_lstm(
-                        write_wav_to_filename=write_wav_to_filename,
-                        overwrite_wav=overwrite_wav,
-                        output_wav_len=output_wav_len,
-                        load_model_from_chkpt=save_model_to_chkpt,
-                    )
-                # print()  # print linebreak
+        for epoch_i in range(epochs):
+            tot_batch_loss = 0
+            epoch_loss = 0
+            with tqdm(range(n_batches), leave=False) as batch_counter:
+                for batch_i in batch_counter:
+                    features_batch = features[batch_i]
+                    labels_batch = labels[batch_i]
+                    optimizer.zero_grad()
+                    y_pred, _ = net(features_batch)
+                    loss = loss_fn(y_pred, labels_batch)
+                    epoch_loss += loss
+                    loss.backward()
+                    optimizer.step()
+                    tot_batch_loss += loss.item()
+                    running_loss = tot_batch_loss / float(batch_i + 1)
+                    batch_counter.desc = "Epoch {} Loss: {}".format(epoch_i, running_loss)
+                batch_counter.close()
+            # report loss
+            epoch_loss = tot_batch_loss / float(n_batches)
+            print("Epoch {} Avg Loss: {}\n".format(epoch_i, epoch_loss))
+            # save model
+            if epoch_i % save_model_every_n_epochs == 0:
+                print(f"\tSaving model {save_model_to_chkpt}\n")
+                torch.save(net, save_model_to_chkpt)
+            # generate wav sample
+            if epoch_i % generate_wav_every_n_epochs == 0:
+                gen_wav_with_lstm(
+                    write_wav_to_filename=write_wav_to_filename,
+                    overwrite_wav=overwrite_wav,
+                    output_wav_len=output_wav_len,
+                    load_model_from_chkpt=save_model_to_chkpt,
+                )
     except KeyboardInterrupt:
         print(f"Training interrupted")
     print(f"Saving model {save_model_to_chkpt}")
