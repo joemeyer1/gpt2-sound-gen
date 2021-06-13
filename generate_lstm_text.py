@@ -16,7 +16,7 @@ def gen_wav_with_lstm(
 
     if not overwrite_wav:
         write_wav_to_filename = make_name_unique(write_wav_to_filename)
-    print(f"Generating wav {write_wav_to_filename}")
+    print(f"\nGenerating wav '{write_wav_to_filename}'")
 
     net = torch.load(load_model_from_chkpt)
 
@@ -39,7 +39,7 @@ def gen_wav_with_lstm(
     for h in hex_prompt:
         wav_body += h
 
-    print(f"writing wav file '{write_wav_to_filename}'")
+    print(f"writing wav file '{write_wav_to_filename}'\n")
     write_wav(wav_txt=wav_body, write_wav_to_filename=write_wav_to_filename)
 
 
