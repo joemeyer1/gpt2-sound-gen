@@ -12,12 +12,13 @@ def train_lstm(
     epochs: int = 10,
     n_max_files: int = 1,
     in_wav_dir_name: str = "sound_data_percussion",
+    write_wav_to_filename="generated_drums.wav",
     wav_str_filename: str = "sound_short.txt",
     use_previous_training_data: bool = True,
     learning_rate=.01,
     output_wav_len=100,
     load_model_from_chkpt=None,
-    save_model_every_n_epochs=1000,
+    save_model_every_n_epochs=5,
     overwrite_previous_model=False,
 ):
 
@@ -54,6 +55,9 @@ def train_lstm(
             y_pred, _ = net(features)
             loss = loss_fn(y_pred, labels)
             print(f"epoch {i} loss: {loss}\n")
+            if i > 0 and i % save_model_every_n_epochs == 0:
+                print("Saving model")
+                torch.save(net, 'lstm.pt')
             loss.backward()
             optimizer.step()
     except Exception as e:
@@ -79,7 +83,6 @@ def train_lstm(
     for h in hex_prompt:
         wav_body += h
 
-    write_wav_to_filename = "trash.wav"
     print(f"writing wav file '{write_wav_to_filename}'")
     write_wav(wav_txt=wav_body, write_wav_to_filename=write_wav_to_filename)
     torch.save(net, 'lstm.pt')
