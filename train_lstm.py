@@ -103,7 +103,9 @@ def train_lstm(
     # get data
     data = torch.tensor(np.expand_dims(get_training_data(read_wav_from_dir=data_config.in_wav_dir_name, n_max_files=data_config.n_max_files), -1).astype(np.float32))
     n_files = data.shape[0]
-    assert training_config.batch_size > 0
+    assert training_config.batch_size >= 0
+    if training_config.batch_size == 0:
+        training_config.batch_size = n_files
     while n_files % training_config.batch_size > 0:
         training_config.batch_size -= 1
     n_batches = n_files // training_config.batch_size
