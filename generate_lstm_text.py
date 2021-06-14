@@ -14,6 +14,7 @@ def gen_wav_with_lstm(
     overwrite_wav=False,
     output_wav_len=100,
     load_model_from_chkpt='lstm.pt',
+    verbose=True,  # write ints, useful for debugging
 ):
 
     if not overwrite_wav:
@@ -30,6 +31,12 @@ def gen_wav_with_lstm(
         y_pred, hncn = net(next_input, hncn)
         generated_wav_body = torch.cat((generated_wav_body, y_pred[-1:]))
     generated_wav_body = net.decode_output(generated_wav_body)
+    if verbose:
+        print(f"generated_wav_body: {generated_wav_body}")
+        write_ints_to_filename = write_wav_to_filename.split('.')[0] + '_ints.txt'
+        with open(write_ints_to_filename, 'w') as f:
+            for i in generated_wav_body.flatten().tolist():
+                f.write(i + ' ')
 
     def int_to_hex_str(int_to_convert, n_bits):
         ret = hex(int_to_convert)[2:]

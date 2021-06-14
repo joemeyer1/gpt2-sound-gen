@@ -119,8 +119,8 @@ def train_lstm(
     print(f"data_std: {data_std}")
     print(f"data_avg: {data_avg}")
 
-    features = data[:, :-1]
-    labels = data[:, 1:]
+    features = data[:, :, :-1]
+    labels = data[:, :, 1:]
 
     # get net
     if model_config.load_model_from_chkpt:
@@ -129,10 +129,7 @@ def train_lstm(
         net.std_for_decoding = data_std
         net.mean_for_decoding = data_avg
     else:
-        hidden_size = 32
-        num_layers = 3
-        activation = torch.nn.Tanh()
-        print(f"creating new net\n\tnum_layers: '{num_layers}'\n\thidden_size: '{model_config.hidden_size}'\n\tactivation '{activation}'\n")
+        print(f"creating new net\n\tnum_layers: '{model_config.num_layers}'\n\thidden_size: '{model_config.hidden_size}'\n\tactivation '{model_config.activation}'\n")
         net = LSTMWithHead(
             input_size=1,
             output_size=1,
@@ -180,6 +177,7 @@ def train_lstm(
                     overwrite_wav=data_config.overwrite_wav,
                     output_wav_len=data_config.output_wav_len,
                     load_model_from_chkpt=training_config.save_model_to_chkpt,
+                    verbose=True,
                 )
     except KeyboardInterrupt:
         print(f"Training interrupted")
@@ -191,6 +189,7 @@ def train_lstm(
         overwrite_wav=data_config.overwrite_wav,
         output_wav_len=data_config.output_wav_len,
         load_model_from_chkpt=training_config.save_model_to_chkpt,
+        verbose=True,
     )
 
 
