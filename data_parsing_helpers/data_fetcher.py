@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-# Copyright (c) Joe Meyer (2020). All rights reserved.
+# Copyright (c) Joseph Meyer (2020). All rights reserved.
 
 import os
 

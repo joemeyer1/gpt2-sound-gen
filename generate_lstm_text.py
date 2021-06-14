@@ -1,3 +1,5 @@
+#!usr/bin/env python3
+# Copyright (c) Joseph Meyer (2021). All rights reserved.
 
 import fire
 import numpy as np
