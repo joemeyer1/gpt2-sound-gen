@@ -126,6 +126,7 @@ trained_model/*
 sound_data_percussion
 sound_data_strings
 sound*.txt
+generated_*.txt
 *data_channels*
 generated*.wav
 
