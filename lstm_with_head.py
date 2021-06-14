@@ -15,11 +15,15 @@ class LSTMWithHead(nn.Module):
         self.linear_layer = nn.Linear(self.hidden_size, self.output_size)
         self.std_for_decoding = torch.mean(kwargs.get("std_for_decoding", torch.tensor(1)))
         self.mean_for_decoding = torch.mean(kwargs.get("mean_for_decoding", torch.tensor(1)))
+        self.min_output = self.encode_output(0)
 
     def forward(self, x, hncn=None):
         xn, (hn, cn) = self.lstm_layer(x, hncn)
-        out = self.linear_layer(self.activation(xn))
+        out = torch.clamp(self.linear_layer(self.activation(xn)), min=self.min_output)
         return out, (hn, cn)
+
+    def encode_output(self, int_to_encode):
+        return (int_to_encode + self.mean_for_decoding) / self.std_for_decoding
 
     def decode_output(self, lstm_output):
         return (lstm_output * self.std_for_decoding) + self.mean_for_decoding
