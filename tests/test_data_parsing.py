@@ -51,7 +51,8 @@ def test_extract_data(read_wav_from_filename: str = "/Users/joemeyer/Documents/g
 def test_read_write_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
     write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels",
-):
+) -> None:
+    """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
     _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=f"{write_to_filename}.txt")
     vec_to_wav(write_to_filename, header_info)
