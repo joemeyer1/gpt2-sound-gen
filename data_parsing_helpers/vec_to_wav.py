@@ -1,8 +1,10 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
-from data_parsing_helpers.file_helpers import unbin_data
 import numpy as np
+
+from data_parsing_helpers.file_helpers import unbin_data
+
 
 def vec_to_wav(
         vec_filename,  # e.g. "violin_Gs3_1_piano_arco-sul-tasto_data_channels"
@@ -57,12 +59,3 @@ def str_to_hex(str):
 def int_to_hex(int_to_convert, bytes, signed: bool = False, byteorder='little'):
     ret = (int(int_to_convert)).to_bytes(bytes, byteorder=byteorder, signed=signed)
     return ret
-
-#
-# def _reverse_mus_law(quantized_pressure, n_bins: int = 256) -> int:
-#     mu = n_bins - 1
-#     raw_pressure = np.sign(quantized_pressure) * (np.exp(np.abs(quantized_pressure) * np.log(mu + 1)) - 1) / mu
-#     return raw_pressure
-#
-
-# vec_to_wav()
