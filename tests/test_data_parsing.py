@@ -2,15 +2,12 @@
 # Copyright (c) Joseph Meyer. All rights reserved.
 
 
-import random
-
 import numpy as np
 
-from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
 from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_int
-
 from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex
+from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
 
 
 def test_bytes_fetch():
@@ -55,27 +52,11 @@ def test_read_write_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
     write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels",
 ):
-    # write_wav_to_filename = f"{read_wav_from_filename.split('.')[0]}_data_channels"
-    # write_binned_data_to_filename = f"{write_to_filename}.txt"
-    # write_wav_to_filename = f"{write_to_filename}.wav"
 
     _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=f"{write_to_filename}.txt")
     vec_to_wav(write_to_filename, header_info)
 
-# def test_bin_data():
-#     data = extract_data("/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav")
-#     print(data)
-#     bin_data(data[0][0])
-#
-# def test_main():
-#     read_wav_from_filename = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav"
-#     write_wav_to_filename = f"{read_wav_from_filename.split('.')[0]}_data_channels"
-#     _, header_info = extract_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=write_wav_to_filename)
-#     vec_to_wav(write_wav_to_filename, header_info)
 
 def test_wav_encoding():
     data = get_training_data("/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy", n_max_files=2)
     print(data)
-
-# def test_decoding():
-#     pass
