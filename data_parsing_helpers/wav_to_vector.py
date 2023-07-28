@@ -1,10 +1,9 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
-from math import log
-import numpy as np
+from typing import Tuple, Dict, Optional
 
-from typing import Tuple, Dict, Optional, List
+import numpy as np
 
 from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str, bin_data
 

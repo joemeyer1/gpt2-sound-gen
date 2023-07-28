@@ -5,7 +5,6 @@ import fire
 from tqdm import tqdm
 
 from data_parsing_helpers.data_fetcher import get_training_data
-from data_parsing_helpers.vec_to_wav import int_to_hex
 
 
 def convert_wav_to_text_file(

@@ -1,8 +1,10 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
-import numpy as np
 from typing import List
+
+import numpy as np
+
 
 def file_to_hex_ls(filename):
     hex_str = file_to_hex_str(filename)
