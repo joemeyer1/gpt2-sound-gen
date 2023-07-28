@@ -1,7 +1,7 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
-
+from data_parsing_helpers.file_helpers import _reverse_mus_law
 import numpy as np
 
 def vec_to_wav(
@@ -13,7 +13,7 @@ def vec_to_wav(
     header_info['subchunk2size'] = len(vec) * 4
     hex_str = write_header(header_info)  # e.g.chunk_size=259312, num_channels=1, sample_rate=44100, bits_per_sample=16, subchunk2size=258048
     for n in vec.flatten():
-        hex_str += int_to_hex(n, 4)
+        hex_str += int_to_hex(_reverse_mus_law(n), 4)
 
     # hex_str += bytearray(vec)
     with open(f"new_hex_{vec_filename}.wav", 'wb') as f:
@@ -55,5 +55,11 @@ def int_to_hex(int_to_convert, bytes):
     ret = (int(int_to_convert)).to_bytes(bytes, byteorder='little')
     return ret
 
+#
+# def _reverse_mus_law(quantized_pressure, n_bins: int = 256) -> int:
+#     mu = n_bins - 1
+#     raw_pressure = np.sign(quantized_pressure) * (np.exp(np.abs(quantized_pressure) * np.log(mu + 1)) - 1) / mu
+#     return raw_pressure
+#
 
 # vec_to_wav()

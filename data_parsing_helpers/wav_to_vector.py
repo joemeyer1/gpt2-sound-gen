@@ -1,10 +1,12 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
+from math import log
+import numpy as np
 
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, List
 
-from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str
+from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str, bin_data
 
 
 def extract_header(hex_ls):
@@ -82,6 +84,11 @@ def extract_data(
     data_hex_ls = file_to_hex_ls(read_wav_from_filename)
     header_info, hex_ls, i = extract_header(data_hex_ls)
     data_channels = extract_body(hex_ls, i, header_info)
+
+    # quantize
+    for ix, data_channel in data_channels.items():
+        data_channels[ix] = bin_data(data_channel)
+
     if write_wav_to_filename:
         import numpy as np
         np.savetxt(fname=write_wav_to_filename, X=np.array(list(data_channels.values())).transpose(), fmt='%d', delimiter=' ')

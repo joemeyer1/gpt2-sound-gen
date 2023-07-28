@@ -9,7 +9,7 @@ from data_parsing_helpers.vec_to_wav import int_to_hex
 
 
 def convert_wav_to_text_file(
-        in_wav_dir_name: str = "sound_data",
+        in_wav_dir_name: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
         out_text_filename: str = "sound.txt",
         n_max_files: int = 1,
 ) -> None:
@@ -28,7 +28,8 @@ def convert_wav_to_text_file(
         for file_tokens in ints_data:
             # new_tokens.append('<START>')
             for token in file_tokens:
-                new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
+                new_tokens += [int(token), '-']
+                # new_tokens += hex_to_tokens(int_to_hex(int_to_convert=token, bytes=4)) + ['-']
             new_tokens.append('<endoftext>')
             t.update()
     print(f"Converting {len(new_tokens)} tokens to str...")
