@@ -8,6 +8,8 @@ from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_int
 from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex
 from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
+from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
+
 
 
 def test_bytes_fetch():
@@ -61,3 +63,15 @@ def test_read_write_wav(
 def test_wav_encoding():
     data = get_training_data("/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy", n_max_files=2)
     print(data)
+
+
+def test_wav_to_text(
+    n_max_files: int = 1,
+    in_wav_dir_name: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
+    wav_str_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/sound.txt",
+):
+    convert_wav_to_text_file(
+        in_wav_dir_name=in_wav_dir_name,
+        out_text_filename=wav_str_filename,
+        n_max_files=n_max_files,
+    )
