@@ -9,11 +9,12 @@ def vec_to_wav(
         header_info,
 ):  # "test_data_channels"):
     vec = np.loadtxt(vec_filename, dtype=int)
-    header_info['chunk_size'] = (len(vec) * 4) + 36
-    header_info['subchunk2size'] = len(vec) * 4
+    unbinned_vec = unbin_data(vec.tolist())
+    header_info['chunk_size'] = (len(unbinned_vec) * 4) + 36
+    header_info['subchunk2size'] = len(unbinned_vec) * 4
     hex_str = write_header(header_info)  # e.g.chunk_size=259312, num_channels=1, sample_rate=44100, bits_per_sample=16, subchunk2size=258048
-    for n in vec.flatten():
-        hex_str += int_to_hex(unbin_data(n), 4)
+    for n in unbinned_vec:
+        hex_str += int_to_hex(int_to_convert=n, bytes=4, signed=True)
 
     # hex_str += bytearray(vec)
     with open(f"new_hex_{vec_filename}.wav", 'wb') as f:
@@ -45,14 +46,16 @@ def write_header(header_info: dict):
     hex_str += int_to_hex(subchunk2size, 4)
     return hex_str
 
+
 def str_to_hex(str):
     hex_str = b''
     for s in str:
         hex_str += int_to_hex(ord(s), bytes=1)
     return hex_str
 
-def int_to_hex(int_to_convert, bytes):
-    ret = (int(int_to_convert)).to_bytes(bytes, byteorder='little')
+
+def int_to_hex(int_to_convert, bytes, signed: bool = False):
+    ret = (int(int_to_convert)).to_bytes(bytes, byteorder='little', signed=signed)
     return ret
 
 #
