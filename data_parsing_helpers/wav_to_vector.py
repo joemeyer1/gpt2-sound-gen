@@ -67,7 +67,7 @@ def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
     num_channels = header_info['num_channels']
     binary_bits_per_sample = header_info['bits_per_sample']
     assert binary_bits_per_sample % 8 == 0
-    hex_bits_per_sample = binary_bits_per_sample // 8  # 16 = 2**4
+    hex_bits_per_sample = binary_bits_per_sample // 8  # 16**2 = 2**8
     assert hex_bits_per_sample % num_channels == 0
     hex_bits_per_sample_per_channel = hex_bits_per_sample // num_channels
     from collections import defaultdict

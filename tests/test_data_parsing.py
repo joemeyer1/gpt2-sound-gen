@@ -13,8 +13,6 @@ from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_
 from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex
 
 
-
-
 def test_bytes_fetch():
     hex_ls = ['ff', '7f', '00', 'ff']
     n_bytes, i = get_n_bytes_int(n=2, hex_ls=hex_ls, i=0)
@@ -53,10 +51,16 @@ def test_extract_data(read_wav_from_filename: str = "/Users/joemeyer/Documents/g
     print(reconstructed_data)
 
 
-def test_write_wav(read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav"):
-    write_wav_to_filename = f"{read_wav_from_filename.split('.')[0]}_data_channels"
-    _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=write_wav_to_filename)
-    vec_to_wav(write_wav_to_filename, header_info)
+def test_read_write_wav(
+    read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels",
+):
+    # write_wav_to_filename = f"{read_wav_from_filename.split('.')[0]}_data_channels"
+    # write_binned_data_to_filename = f"{write_to_filename}.txt"
+    # write_wav_to_filename = f"{write_to_filename}.wav"
+
+    _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=f"{write_to_filename}.txt")
+    vec_to_wav(write_to_filename, header_info)
 
 # def test_bin_data():
 #     data = extract_data("/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav")
