@@ -62,6 +62,7 @@ def extract_header(hex_ls):
     }
     return header_info, hex_ls, i
 
+
 def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
     num_channels = header_info['num_channels']
     binary_bits_per_sample = header_info['bits_per_sample']
@@ -77,17 +78,24 @@ def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
             data_channels[channel].append(channel_sample)
     return data_channels
 
-def extract_data(
+
+def extract_binned_data(
         read_wav_from_filename: str,
         write_wav_to_filename: Optional[str] = None,
 ) -> Tuple[Dict[int, list], Dict[str, int]]:
+    """Extracts quantized audio data and header info."""
+
+    raw_data_channels, header_info = extract_data(read_wav_from_filename=read_wav_from_filename)
+
+    quantized_data_channels = {ix: bin_data(data_channel) for ix, data_channel in raw_data_channels.items()}
+
+    if write_wav_to_filename:
+        np.savetxt(fname=write_wav_to_filename, X=np.array(list(quantized_data_channels.values())).transpose(), fmt='%d', delimiter=' ')
+    return quantized_data_channels, header_info
+
+
+def extract_data(read_wav_from_filename: str) -> Tuple[Dict[int, list], Dict[str, int]]:
     data_hex_ls = file_to_hex_ls(read_wav_from_filename)
     header_info, hex_ls, i = extract_header(data_hex_ls)
     data_channels = extract_body(hex_ls, i, header_info)
-
-    quantized_data_channels = {ix: bin_data(data_channel) for ix, data_channel in data_channels.items()}
-
-    if write_wav_to_filename:
-        import numpy as np
-        np.savetxt(fname=write_wav_to_filename, X=np.array(list(quantized_data_channels.values())).transpose(), fmt='%d', delimiter=' ')
-    return quantized_data_channels, header_info
+    return data_channels,  header_info

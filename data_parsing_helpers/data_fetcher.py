@@ -5,7 +5,7 @@ import os
 
 import numpy as np
 
-from data_parsing_helpers.wav_to_vector import extract_data
+from data_parsing_helpers.wav_to_vector import extract_binned_data
 
 
 def get_training_data(read_wav_from_dir: str, n_max_files: int = 0) -> np.array:
@@ -21,7 +21,7 @@ def get_training_data(read_wav_from_dir: str, n_max_files: int = 0) -> np.array:
     np.random.shuffle(filenames)
     for filename in filenames[-n_max_files:]:
         read_wav_from_path = f"{read_wav_from_dir}/{filename}"
-        data_channels, _ = extract_data(read_wav_from_filename=read_wav_from_path)
+        data_channels, _ = extract_binned_data(read_wav_from_filename=read_wav_from_path)
         flat_data_channels = np.array(list(data_channels.values())).flatten()
         vectors_list.append(flat_data_channels)
     biggest_vector_len = max([len(vec) for vec in vectors_list])
