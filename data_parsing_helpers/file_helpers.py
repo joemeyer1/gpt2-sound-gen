@@ -64,10 +64,10 @@ def read_hex_ls(hex_str):
 def bin_data(wav_data: List[int], n_bins: int = 256, n_bits: int = 16) -> List[int]:
     """Takes wav data with real integer values and returns binned/simplified representation."""
 
-    max_pressure: int = 16**n_bits - 1
+    max_pressure: int = 2**(n_bits - 1)
 
     def standardize_pressure(pressure: int) -> float:
-        return ((pressure / max_pressure) - 0.5) * 2
+        return pressure / max_pressure
 
     def mus_law(standardized_pressure: float) -> float:
         return _mus_law(standardized_pressure, n_bins=n_bins)
@@ -82,7 +82,7 @@ def bin_data(wav_data: List[int], n_bins: int = 256, n_bits: int = 16) -> List[i
 
 def unbin_data(binned_data: List[int], n_bins: int = 256, n_bits: int = 16) -> List[int]:
 
-    max_pressure: int = 16**n_bits - 1
+    max_pressure: int = 2**(n_bits - 1)
 
     def unbin(binned: int) -> float:
         """Maps a binned value to [-1, 1]"""
@@ -94,7 +94,7 @@ def unbin_data(binned_data: List[int], n_bins: int = 256, n_bits: int = 16) -> L
         return unmud_pressure
 
     def unstandardize_pressure(standardized_pressure: float) -> int:
-        return int(((standardized_pressure / 2) + 0.5) * max_pressure)
+        return standardized_pressure * max_pressure
 
     unbinned_data = list(map(unbin, binned_data))
     reverse_mu_data = list(map(_reverse_mus_law, unbinned_data))

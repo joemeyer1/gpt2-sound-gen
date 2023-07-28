@@ -65,8 +65,8 @@ def extract_header(hex_ls):
 def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
     num_channels = header_info['num_channels']
     binary_bits_per_sample = header_info['bits_per_sample']
-    assert binary_bits_per_sample % 4 == 0
-    hex_bits_per_sample = binary_bits_per_sample // 4  # 16 = 2**4
+    assert binary_bits_per_sample % 8 == 0
+    hex_bits_per_sample = binary_bits_per_sample // 8  # 16 = 2**4
     assert hex_bits_per_sample % num_channels == 0
     hex_bits_per_sample_per_channel = hex_bits_per_sample // num_channels
     from collections import defaultdict
@@ -85,11 +85,9 @@ def extract_data(
     header_info, hex_ls, i = extract_header(data_hex_ls)
     data_channels = extract_body(hex_ls, i, header_info)
 
-    # quantize
-    for ix, data_channel in data_channels.items():
-        data_channels[ix] = bin_data(data_channel)
+    quantized_data_channels = {ix: bin_data(data_channel) for ix, data_channel in data_channels.items()}
 
     if write_wav_to_filename:
         import numpy as np
-        np.savetxt(fname=write_wav_to_filename, X=np.array(list(data_channels.values())).transpose(), fmt='%d', delimiter=' ')
-    return data_channels, header_info
+        np.savetxt(fname=write_wav_to_filename, X=np.array(list(quantized_data_channels.values())).transpose(), fmt='%d', delimiter=' ')
+    return quantized_data_channels, header_info
