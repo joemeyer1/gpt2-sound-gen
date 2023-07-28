@@ -23,10 +23,14 @@ def test_bytes_fetch():
     assert n_bytes == -256
     print(i)
 
+
 def test_int_to_hex():
     int_to_convert0 = 32767
+    hex0 = int_to_hex(int_to_convert=int_to_convert0, bytes=2, signed=True)
+    assert int.from_bytes(hex0, byteorder='little', signed=True) == int_to_convert0
     int_to_convert1 = -256
-    int_to_hex(int_to_convert=int_to_convert0, bytes=4, signed=True)
+    hex1 = int_to_hex(int_to_convert=int_to_convert1, bytes=2, signed=True)
+    assert int.from_bytes(hex1, byteorder='little', signed=True) == int_to_convert1
 
 
 def test_bin_data():
