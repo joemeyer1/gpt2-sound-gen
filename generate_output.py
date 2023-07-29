@@ -16,7 +16,7 @@ def generate_wav(
         model_folder: str,  # e.g. 'trained_model'
         tokenizer_file: str,  # e.g. 'aitextgen.tokenizer.json'
         write_wav_to_filename: str,  # e.g. 'generated_sound.wav'
-        min_audio_length: int,
+        min_audio_samples: int,
         window_length: int,
         num_channels: int,
         sample_rate: int,
@@ -33,7 +33,7 @@ def generate_wav(
         model_folder=model_folder,
         tokenizer_file=tokenizer_file,
         prompt=prompt,
-        min_audio_length=min_audio_length,
+        min_audio_length=min_audio_samples,
         window_length=window_length,
         overwrite_previous_model_data=overwrite_previous_model_data,
     )
@@ -86,9 +86,10 @@ def _generate_raw(
                 return_as_list=True
             )[0][len(next_generated_text_prompt):]
             clean_next_generated_bin = get_clean_next_generated_text(next_generated_text)
-            generated_data = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_bin + '-'
-            audio_length += 1
-            t.update()
+            if clean_next_generated_bin != '':
+                generated_data = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_bin + '-'
+                audio_length += 1
+                t.update()
     if write_raw_output_to_filename:
         print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:
@@ -151,9 +152,13 @@ def get_clean_next_generated_text(generated_text: str) -> str:
                 chunk += text[i]
                 if len(chunk) == 3:
                     return chunk
+        return chunk
 
     first_ints_chunk = get_first_ints_chunk(generated_text)
-    return str(min(int(first_ints_chunk), 255))
+    if first_ints_chunk == '':
+        return first_ints_chunk
+    else:
+        return str(min(int(first_ints_chunk), 255))
 
 
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
