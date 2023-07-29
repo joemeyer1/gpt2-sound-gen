@@ -3,13 +3,13 @@
 
 import unittest
 
-from train_model import train_model
+from train_gpt2 import train_gpt2
 from generate_output import generate_wav
 
 
 class GPTTests(unittest.TestCase):
     def test_train_gpt2(self):
-        train_model(
+        train_gpt2(
             steps=1,
             n_max_files=1,
             in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
