@@ -46,7 +46,6 @@ class DataParsingTests(unittest.TestCase):
         reconstructed_data = unbin_data(quantized_data_channels[0])
         print(reconstructed_data)
 
-
     def test_bytes_to_pretty_str(
         self,
         read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
