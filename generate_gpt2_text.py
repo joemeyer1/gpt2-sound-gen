@@ -4,12 +4,13 @@
 import os
 from tqdm import tqdm
 
-from typing import Optional
+from typing import Optional, List
 
 import fire
 from aitextgen.aitextgen import aitextgen
 
-from data_parsing_helpers.vec_to_wav import write_header, str_to_hex
+from data_parsing_helpers.vec_to_wav import write_header, str_to_hex, int_to_hex
+from data_parsing_helpers.file_helpers import unbin_data
 
 
 def generate_wav(
@@ -24,19 +25,20 @@ def generate_wav(
         sample_rate=48000,
         bits_per_sample=16,
 ) -> None:
+    header_info = {
+        "num_channels": num_channels,
+        "sample_rate": sample_rate,
+        "bits_per_sample": bits_per_sample,
+    }
     clean_generated_wav_txt = generate_text(
         model_folder=model_folder,
         tokenizer_file=tokenizer_file,
         prompt=prompt,
         min_text_length=min_text_length,
         window_length=window_length,
+        bytes_per_sample=header_info['bits_per_sample'] // 8,
         overwrite_previous_model_data=overwrite_previous_model_data,
     )
-    header_info = {
-        "num_channels": num_channels,
-        "sample_rate": sample_rate,
-        "bits_per_sample": bits_per_sample,
-    }
     if not overwrite_previous_model_data:
         write_wav_to_filename = make_name_unique(write_wav_to_filename)
     print(f"writing wav file '{write_wav_to_filename}'")
@@ -49,10 +51,11 @@ def generate_text(
         prompt="",
         min_text_length=10000,
         window_length=16,
+        bytes_per_sample: int = 2,
         write_raw_output_to_filename=None,
         write_clean_output_to_filename=None,
         overwrite_previous_model_data=False,
-) -> str:
+) -> bytes:
 
     if overwrite_previous_model_data:
         if write_raw_output_to_filename:
@@ -69,47 +72,67 @@ def generate_text(
             next_generated_text = ai.generate(
                 n=1,
                 max_length=512,
+                min_length=4,
                 # batch_size=100,
                 prompt=next_generated_text_prompt,
                 return_as_list=True
-            )[0]#.split('-')[0]
-            raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text
-            t.update(len(next_generated_text) - len(next_generated_text_prompt))
+            )[0][len(next_generated_text_prompt):]#.split('-')[0]]
+            clean_next_generated_text = get_clean_next_generated_text(next_generated_text)
+            raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_text + '-'
+            t.update(len(clean_next_generated_text) - len(next_generated_text_prompt))
     if write_raw_output_to_filename:
         print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:
             f.write(raw_generated_wav_txt)
     else:
         print(f"RAW:\n{raw_generated_wav_txt}\n")
-    clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
+    # clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
+    clean_generated_wav_txt = raw_generated_wav_txt
 
-    clean_generated_wav_txt = format_wav_body(hex_text=clean_generated_wav_txt)
+    clean_generated_wav_txt = format_wav_body(generated_text=clean_generated_wav_txt, bytes_per_sample=bytes_per_sample)
     if write_clean_output_to_filename:
-        with open(write_clean_output_to_filename, 'w') as f:
+        with open(write_clean_output_to_filename, 'wb') as f:
             print(f"writing clean output to file '{write_clean_output_to_filename}'")
             f.write(clean_generated_wav_txt)
     else:
         print(f"CLEAN:\n{clean_generated_wav_txt}\n")
     return clean_generated_wav_txt
 
-def write_wav(wav_txt: str, write_wav_to_filename: str, header_info=None):
+def write_wav(wav_txt: bytes, write_wav_to_filename: str, header_info=None):
     if not header_info:
         header_info = {
             "num_channels": 1,
             "sample_rate": 48000,
             "bits_per_sample": 16,
         }
-    wav_txt = wav_txt.replace(' ', '').replace('\n', '')
-    len_txt = len(wav_txt)
-    header_info['chunk_size'] = (len_txt // 2) + 36
-    header_info['subchunk2size'] = len_txt // 2
+    # wav_txt = wav_txt.replace(' ', '').replace('\n', '')
+    # len_txt = len(wav_txt)
+    header_info['chunk_size'] = len(wav_txt) + 36
+    header_info['subchunk2size'] = len(wav_txt) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
     header_str = write_header(header_info)
     print(header_str)
-    body_str = str_to_hex(wav_txt)
+    body_str = wav_txt
+    # body_str = str_to_hex(wav_txt)
     whole_str = header_str + body_str
     print(whole_str)
     with open(write_wav_to_filename, 'wb') as f:
         f.write(whole_str)
+
+
+def get_clean_next_generated_text(generated_text: str) -> str:
+
+    def get_first_ints_chunk(text: str) -> str:
+        chunk = ''
+        for i in range(len(text)):
+            if text[i] == '-' and len(chunk) > 0:
+                return chunk
+            elif text[i].isdigit():
+                chunk += text[i]
+                if len(chunk) == 3:
+                    return chunk
+
+    first_ints_chunk = get_first_ints_chunk(generated_text)
+    return str(min(int(first_ints_chunk), 255))
 
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
     clean_output = ""
@@ -122,21 +145,30 @@ def clean_model_output(model_output: str, bits_per_word=8) -> str:
     return clean_output
 
 
-def format_wav_body(hex_text: str) -> str:
+def format_wav_body(generated_text: str, bytes_per_sample: int) -> bytes:
     """Returns a formatted wav body given hex text like expected gpt2 output."""
 
-    word_list = hex_text.split('-')
-    wav_body = ""
-    i = 0
-    for word in word_list:
-        worda, wordb = word[:4], word[4:]
-        wav_body += worda + " " + wordb
-        i += 1
-        if not i % 4:
-            wav_body += '\n'
-        else:
-            wav_body += ' '
-    return wav_body
+    generated_pressures = list(map(int, generated_text.split('-')[:-1]))
+    unbinned_pressures = unbin_data(generated_pressures)
+    hex_pressures = b''.join(map(
+        lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, bytes=bytes_per_sample, signed=True),
+        unbinned_pressures,
+    ))
+    return hex_pressures
+
+    # wav_body = ""
+    # return hex_pressures
+    # i = 0
+    # for hex_pressure in hex_pressures:
+    #     int_to_hex(int_to_convert=word, bytes=bytes_per_sample, signed=True)
+    #     worda, wordb = word[:4], word[4:]
+    #     wav_body += hex_pressure + " "
+    #     i += 1
+    #     if not i % 4:
+    #         wav_body += '\n'
+    #     else:
+    #         wav_body += ' '
+    # return wav_body
 
 def make_name_unique(name: str) -> str:
 
