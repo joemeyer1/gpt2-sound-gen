@@ -70,12 +70,12 @@ def generate_text(
             write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
-    raw_generated_wav_txt = prompt
+    generated_data = prompt
     audio_length = 0
     with tqdm(total=min_audio_length, desc="generating gpt2 output tokens") as t:
         while audio_length < min_audio_length:
-            generated_text_up_to_prompt = raw_generated_wav_txt[:-window_length]
-            next_generated_text_prompt = raw_generated_wav_txt[-window_length:]
+            generated_text_up_to_prompt = generated_data[:-window_length]
+            next_generated_text_prompt = generated_data[-window_length:]
             next_generated_text = ai.generate(
                 n=1,
                 max_length=512,
@@ -83,18 +83,18 @@ def generate_text(
                 # batch_size=100,
                 prompt=next_generated_text_prompt,
                 return_as_list=True
-            )[0][len(next_generated_text_prompt):]#.split('-')[0]]
-            clean_next_generated_text = get_clean_next_generated_text(next_generated_text)
-            raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_text + '-'
+            )[0][len(next_generated_text_prompt):]
+            clean_next_generated_bin = get_clean_next_generated_text(next_generated_text)
+            generated_data = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_bin + '-'
             audio_length += 1
             t.update()
     if write_raw_output_to_filename:
         print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:
-            f.write(raw_generated_wav_txt)
+            f.write(generated_data)
     else:
-        print(f"RAW:\n{raw_generated_wav_txt}\n")
-    return raw_generated_wav_txt
+        print(f"RAW:\n{generated_data}\n")
+    return generated_data
 
 
 def decode_generated_text(
