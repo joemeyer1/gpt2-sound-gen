@@ -6,11 +6,11 @@ import numpy as np
 
 from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_int
-from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex
+from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex, write_header
 from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 
-from generate_gpt2_text import write_wav, decode_generated_text
+from generate_gpt2_text import write_wav, decode_generated_text, add_spaces_and_linebreaks
 
 
 
@@ -54,12 +54,13 @@ def test_extract_data(read_wav_from_filename: str = "/Users/joemeyer/Documents/g
 
 def test_vec_to_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_vec_to_wav",
 ) -> None:
     """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
     _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=f"{write_to_filename}.txt")
     vec_to_wav(write_to_filename, header_info)
+    print()
     # to test/verify, listen to the wav file it writes, and see if it sounds like the input one
 
 
@@ -83,9 +84,26 @@ def test_decode_generated_text(
     )
 
 
+def test_bytes_to_pretty_str(
+    read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_bytes_to_pretty_str.wav",
+):
+    raw_data_channels, header_info = extract_data(read_wav_from_filename)
+    data_bytes = b''.join(map(
+        lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, bytes=2, signed=True),
+        raw_data_channels[0],
+    ))
+    header_info['chunk_size'] = len(data_bytes) + 36
+    header_info['subchunk2size'] = len(data_bytes) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
+    header_bytes = write_header(header_info)
+    whole_wav = header_bytes + data_bytes
+    with open(write_to_filename, 'wb') as f:
+        f.write(whole_wav)
+
+
 def test_write_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channelsbb",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_write.wav",
 ) -> None:
     """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
@@ -96,7 +114,7 @@ def test_write_wav(
         generated_text='-'.join(map(str, quantized_data_channels[0])),
         bytes_per_sample=header_info['bits_per_sample'] // 8,
     )
-    write_wav(raw_pressures=restored_wav, write_wav_to_filename=write_to_filename, header_info=header_info)
+    write_wav(raw_pressures=restored_wav, write_wav_to_filename=write_to_filename, header_info=header_info, n_pressure_samples=len(quantized_data_channels[0]))
 
 
 def test_restore_audio_pressures():

@@ -38,6 +38,7 @@ def generate_wav(
         window_length=window_length,
         overwrite_previous_model_data=overwrite_previous_model_data,
     )
+    n_pressure_samples = clean_generated_wav_txt.count('-')
     restored_wav = decode_generated_text(
         generated_text=clean_generated_wav_txt,
         bytes_per_sample=header_info['bits_per_sample'] // 8,
@@ -45,7 +46,12 @@ def generate_wav(
     if not overwrite_previous_model_data:
         write_wav_to_filename = make_name_unique(write_wav_to_filename)
     print(f"writing wav file '{write_wav_to_filename}'")
-    write_wav(raw_pressures=restored_wav, write_wav_to_filename=write_wav_to_filename, header_info=header_info)
+    write_wav(
+        raw_pressures=restored_wav,
+        write_wav_to_filename=write_wav_to_filename,
+        header_info=header_info,
+        n_pressure_samples=n_pressure_samples,
+    )
 
 
 def generate_text(
@@ -94,23 +100,27 @@ def decode_generated_text(
         bytes_per_sample: int,
         write_clean_output_to_filename: Optional[str] = None,
         overwrite_previous_model_data: bool = True,
-) -> str:
+) -> bytes:
     """Restores binned audio data back to hexadecimal bytes."""
 
     restored_audio_pressures = restore_audio_pressures(generated_text=generated_text, bytes_per_sample=bytes_per_sample)
-    pretty_restored_audio_pressures = bytes_to_pretty_str(restored_audio_pressures)
     if write_clean_output_to_filename:
         if not overwrite_previous_model_data:
             write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
         with open(write_clean_output_to_filename, 'w') as f:
             print(f"writing clean output to file '{write_clean_output_to_filename}'")
-            f.write(pretty_restored_audio_pressures)
+            f.write(restored_audio_pressures)
     else:
-        print(f"CLEAN:\n{pretty_restored_audio_pressures}\n")
-    return pretty_restored_audio_pressures
+        print(f"CLEAN:\n{restored_audio_pressures}\n")
+    return restored_audio_pressures
 
 
-def write_wav(raw_pressures: str, write_wav_to_filename: str, header_info=None):
+def write_wav(
+        raw_pressures: bytes,
+        write_wav_to_filename: str,
+        n_pressure_samples: int,
+        header_info=None,
+):
     if not header_info:
         header_info = {
             "num_channels": 1,
@@ -119,14 +129,12 @@ def write_wav(raw_pressures: str, write_wav_to_filename: str, header_info=None):
         }
     # wav_txt = wav_txt.replace(' ', '').replace('\n', '')
     # len_txt = len(wav_txt)
-    header_info['chunk_size'] = len(raw_pressures) + 36
-    header_info['subchunk2size'] = len(raw_pressures) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
+    header_info['chunk_size'] = (n_pressure_samples * 4) + 36
+    header_info['subchunk2size'] = n_pressure_samples * 4
     header = write_header(header_info)
-    header_str = bytes_to_pretty_str(header)
-    print(header_str)
-    whole_str = header_str + raw_pressures
+    whole_str = header + raw_pressures
     print(whole_str)
-    with open(write_wav_to_filename, 'w') as f:
+    with open(write_wav_to_filename, 'wb') as f:
         f.write(whole_str)
 
 
@@ -169,20 +177,18 @@ def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes
     return hex_pressures
 
 
-def bytes_to_pretty_str(audio_pressures: bytes) -> str:
-    audio_pressures_ugly_str: str = audio_pressures.hex()
-
-    audio_pressures_pretty: str = ''
-    for i, ch in enumerate(audio_pressures_ugly_str):
+def add_spaces_and_linebreaks(audio_pressures: bytes) -> str:
+    audio_with_spaces_and_linebreaks: str = ''
+    for i, ch in enumerate(audio_pressures):
         if i != 0:
             if (i % 32) == 0:
-                audio_pressures_pretty += '\n'
+                audio_with_spaces_and_linebreaks += '\n'
             elif (i % 4) == 0:
-                audio_pressures_pretty += ' '
+                audio_with_spaces_and_linebreaks += ' '
 
-        audio_pressures_pretty += ch
+        audio_with_spaces_and_linebreaks += ch
 
-    return audio_pressures_pretty
+    return audio_with_spaces_and_linebreaks
     # ugly_str = str(audio_pressures).replace('\\', '').replace('b', '').replace("\'", '').replace('x', '')
     # wav_body = ""
     # return hex_pressures
