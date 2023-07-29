@@ -20,6 +20,8 @@ def train_gpt2(
     n_max_files: int = 1,
     in_wav_dir_name: str = "sound_data",
     wav_str_filename: str = "sound.txt",
+    output_dir: str = "trained_model",
+    tokenizer_name: str = "aitextgen00",
     use_previous_training_data: bool = True,
     learning_rate=1e-3,
     load_model_from_chkpt=None,
@@ -38,14 +40,14 @@ def train_gpt2(
             n_max_files=n_max_files,
         )
 
-    tokenizer_prefix = "aitextgen00"
+    # tokenizer_prefix = "aitextgen00"
     if not load_model_from_chkpt:
         block_size = 64
         n_tokens = len(set(TokenDataset(wav_str_filename, block_size=block_size).tokens))  # can also be arbitrary int, e.g. 1000
         print(f"Found vocab of size {n_tokens}\n")
         if not overwrite_previous_model:
-            tokenizer_prefix = make_name_unique(tokenizer_prefix)
-        train_tokenizer(wav_str_filename, vocab_size=n_tokens, prefix=tokenizer_prefix)
+            tokenizer_name = make_name_unique(tokenizer_name)
+        train_tokenizer(wav_str_filename, vocab_size=n_tokens, prefix=tokenizer_name)
 
         config = build_gpt2_config(
             vocab_size=n_tokens,
@@ -56,16 +58,16 @@ def train_gpt2(
             n_head=8,
         )
         print(f"building model with config {config}")
-        ai = aitextgen(tokenizer_file=f"{tokenizer_prefix}.tokenizer.json", config=config)
+        ai = aitextgen(tokenizer_file=f"{tokenizer_name}.tokenizer.json", config=config)
     else:
-        print(f"Loading gpt2 model from chkpt: '{load_model_from_chkpt}' with tokenizer: '{tokenizer_prefix}.tokenizer.json'")
+        print(f"Loading gpt2 model from chkpt: '{load_model_from_chkpt}' with tokenizer: '{tokenizer_name}.tokenizer.json'")
         ai = aitextgen(
             model_folder=load_model_from_chkpt,
-            tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+            tokenizer_file=f"{tokenizer_name}.tokenizer.json",
             to_gpu=False,
         )
 
-    output_dir = "trained_model"
+
     if not overwrite_previous_model:
         output_dir = make_name_unique(output_dir)
     print(f"Training model {output_dir} for {steps} epochs with learning rate {learning_rate}\n")
