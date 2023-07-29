@@ -78,14 +78,14 @@ def train_gpt2(
         save_every=save_model_every_n_epochs,
     )
 
-    generate_wav(
-        model_folder=output_dir,
-        tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
-        prompt="",
-        min_text_length=300000,
-        window_length=16,
-        overwrite_previous_model_data=overwrite_previous_model,
-    )
+    # generate_wav(
+    #     model_folder=output_dir,
+    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+    #     prompt="",
+    #     min_text_length=300000,
+    #     window_length=16,
+    #     overwrite_previous_model_data=overwrite_previous_model,
+    # )
 
     # generate_text(
     #     model_folder=output_dir,
