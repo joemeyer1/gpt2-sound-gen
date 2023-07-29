@@ -77,6 +77,5 @@ class AudioEncodingTests(unittest.TestCase):
         assert get_clean_next_generated_text('-12-1-32-') == '12'
 
 
-
 if __name__ == "__main__":
     unittest.main()
