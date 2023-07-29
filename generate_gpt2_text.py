@@ -17,7 +17,7 @@ def generate_wav(
         model_folder="trained_model_10k_epochs",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
-        min_text_length=10000,
+        min_audio_length=10000,
         window_length=16,
         write_wav_to_filename="trash.wav",
         overwrite_previous_model_data=False,
@@ -34,7 +34,7 @@ def generate_wav(
         model_folder=model_folder,
         tokenizer_file=tokenizer_file,
         prompt=prompt,
-        min_text_length=min_text_length,
+        min_audio_length=min_audio_length,
         window_length=window_length,
         overwrite_previous_model_data=overwrite_previous_model_data,
     )
@@ -58,7 +58,7 @@ def generate_text(
         model_folder="trained_model_10k_epochs",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
-        min_text_length=10000,
+        min_audio_length=10000,
         window_length=16,
         write_raw_output_to_filename=None,
         overwrite_previous_model_data=True,
@@ -71,8 +71,9 @@ def generate_text(
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
-    with tqdm(total=min_text_length, desc="generating gpt2 output tokens") as t:
-        while len(raw_generated_wav_txt) < min_text_length:
+    audio_length = 0
+    with tqdm(total=min_audio_length, desc="generating gpt2 output tokens") as t:
+        while audio_length < min_audio_length:
             generated_text_up_to_prompt = raw_generated_wav_txt[:-window_length]
             next_generated_text_prompt = raw_generated_wav_txt[-window_length:]
             next_generated_text = ai.generate(
@@ -85,7 +86,8 @@ def generate_text(
             )[0][len(next_generated_text_prompt):]#.split('-')[0]]
             clean_next_generated_text = get_clean_next_generated_text(next_generated_text)
             raw_generated_wav_txt = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_text + '-'
-            t.update(len(clean_next_generated_text) - len(next_generated_text_prompt))
+            audio_length += 1
+            t.update()
     if write_raw_output_to_filename:
         print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:
