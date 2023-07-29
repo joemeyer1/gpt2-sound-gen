@@ -40,7 +40,6 @@ def train_gpt2(
             n_max_files=n_max_files,
         )
 
-    # tokenizer_prefix = "aitextgen00"
     if not load_model_from_chkpt:
         block_size = 64
         n_tokens = len(set(TokenDataset(wav_str_filename, block_size=block_size).tokens))  # can also be arbitrary int, e.g. 1000
@@ -67,7 +66,6 @@ def train_gpt2(
             to_gpu=False,
         )
 
-
     if not overwrite_previous_model:
         output_dir = make_name_unique(output_dir)
     print(f"Training model {output_dir} for {steps} epochs with learning rate {learning_rate}\n")
@@ -79,37 +77,6 @@ def train_gpt2(
         output_dir=output_dir,
         save_every=save_model_every_n_epochs,
     )
-
-    # generate_wav(
-    #     model_folder=output_dir,
-    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
-    #     prompt="",
-    #     min_text_length=300000,
-    #     window_length=16,
-    #     overwrite_previous_model_data=overwrite_previous_model,
-    # )
-
-    # generate_text(
-    #     model_folder=output_dir,
-    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
-    #     prompt="",
-    #     min_text_length=100,
-    #     window_length=16,
-    #     write_raw_output_to_filename=None,
-    #     write_clean_output_to_filename=None,
-    #     overwrite_previous_model_data=overwrite_previous_model,
-    # )
-    #
-    # generate_text(
-    #     model_folder=output_dir,
-    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
-    #     prompt="",
-    #     min_text_length=10000,
-    #     window_length=16,
-    #     write_raw_output_to_filename="raw_generated_unformatted_wav.txt",
-    #     write_clean_output_to_filename="clean_generated_formatted_hex_str.txt",
-    #     overwrite_previous_model_data=overwrite_previous_model,
-    # )
 
 
 if __name__ == "__main__":
