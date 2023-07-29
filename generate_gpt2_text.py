@@ -7,7 +7,7 @@ from tqdm import tqdm
 from typing import Optional
 
 import fire
-from aitextgen import aitextgen
+from aitextgen.aitextgen import aitextgen
 
 from data_parsing_helpers.vec_to_wav import write_header, str_to_hex
 
@@ -69,7 +69,7 @@ def generate_text(
             next_generated_text = ai.generate(
                 n=1,
                 max_length=512,
-                batch_size=100,
+                # batch_size=100,
                 prompt=next_generated_text_prompt,
                 return_as_list=True
             )[0]#.split('-')[0]

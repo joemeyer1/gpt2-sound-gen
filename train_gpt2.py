@@ -4,10 +4,10 @@
 import os
 import fire
 
-from aitextgen import aitextgen
-from aitextgen.TokenDataset import TokenDataset
-from aitextgen.tokenizers import train_tokenizer
-from aitextgen.utils import build_gpt2_config
+from aitextgen.aitextgen.TokenDataset import TokenDataset
+from aitextgen.aitextgen.tokenizers import train_tokenizer
+from aitextgen.aitextgen.utils import build_gpt2_config
+from aitextgen.aitextgen import aitextgen
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 from generate_gpt2_text import generate_wav, make_name_unique
