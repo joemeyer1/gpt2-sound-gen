@@ -11,25 +11,30 @@ def file_to_hex_ls(filename):
     hex_ls = hex_str_to_ls(hex_str)
     return hex_ls
 
+
 def get_n_bytes(n, hex_ls, i):
     # get next n bytes after index in in hex_ls
     n_bytes = hex_ls[i: i + n]
     i = i + n
     return n_bytes, i
 
+
 def get_n_bytes_int(n, hex_ls, i):
     n_bytes, i = get_n_bytes(n, hex_ls, i)
-    return get_number(n_bytes), i
+    return _decode_endian_and_twos_comp(n_bytes), i
+
 
 def get_n_bytes_str(n, hex_ls, i):
     n_bytes, i = get_n_bytes(n, hex_ls, i)
     return read_hex_ls(n_bytes), i
+
 
 # helpers for file_to_hex_ls()
 def file_to_hex_str(filename):
     with open(filename, 'rb') as f:
         words = f.read()
     return words.hex()
+
 
 def hex_str_to_ls(hex_str):
     i = 0
@@ -39,8 +44,9 @@ def hex_str_to_ls(hex_str):
         i += 2
     return hex_ls
 
+
 # helper for get_n_bytes_int()
-def get_number(hex_ls):
+def _decode_endian_and_twos_comp(hex_ls):
     # little endian (ones place at start)
     # e.g. ['10', '01'] = x0110 = 256 + 16 = 272
     hex_str = ''
@@ -48,11 +54,13 @@ def get_number(hex_ls):
         hex_str = h + hex_str
     return twos_comp(int(hex_str, 16), len(hex_str) * 4)
 
+
 def twos_comp(val, bits):
     """compute the 2's complement of int value val"""
     if (val & (1 << (bits - 1))) != 0:  # if sign bit is set e.g., 8bit: 128-255
         val = val - (1 << bits)        # compute negative value
     return val
+
 
 # helper for get_n_bytes_str()
 
