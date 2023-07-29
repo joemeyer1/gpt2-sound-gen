@@ -4,7 +4,7 @@
 import unittest
 
 from train_gpt2 import train_gpt2
-from generate_gpt2_text import generate_wav
+from generate_output import generate_wav
 
 
 class GPTTests(unittest.TestCase):

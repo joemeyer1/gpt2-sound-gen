@@ -10,7 +10,7 @@ from aitextgen.aitextgen.utils import build_gpt2_config
 from aitextgen.aitextgen import aitextgen
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
-from generate_gpt2_text import generate_wav, make_name_unique
+from generate_output import generate_wav, make_name_unique
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 

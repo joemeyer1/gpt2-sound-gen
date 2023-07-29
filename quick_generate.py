@@ -1,7 +1,7 @@
 #!usr/bin/env python3
 # Copyright (c) Joseph Meyer. All rights reserved.
 
-from generate_gpt2_text import generate_wav
+from generate_output import generate_wav
 
 
 def test_generate_gpt2():
