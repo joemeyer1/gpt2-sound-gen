@@ -52,7 +52,7 @@ def write_header(header_info: dict):
 def str_to_hex(str):
     hex_str = b''
     for s in str:
-        hex_str += int_to_hex(ord(s), bytes=1)
+        hex_str += int_to_hex(ord(s), bytes=2)
     return hex_str
 
 
