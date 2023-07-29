@@ -97,14 +97,13 @@ def test_bytes_to_pretty_str(
     header_info['subchunk2size'] = len(data_bytes) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
     header_bytes = write_header(header_info)
     whole_wav = header_bytes + data_bytes
-    # pretty_wav = add_spaces_and_linebreaks(whole_wav)
     with open(write_to_filename, 'wb') as f:
         f.write(whole_wav)
 
 
 def test_write_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels_test_write_wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels_test_write.wav",
 ) -> None:
     """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
