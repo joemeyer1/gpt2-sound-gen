@@ -14,12 +14,12 @@ def convert_wav_to_text_file(
 ) -> None:
 
     ints_data = get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files)
-    new_tokens = ['<endoftext>']
+    new_tokens = ['<|endoftext|>']
     with tqdm(total=len(ints_data), desc="Formatting training data files") as t:
         for file_tokens in ints_data:
             for token in file_tokens:
                 new_tokens += [int(token), '-']
-            new_tokens.append('<endoftext>')
+            new_tokens.append('<|endoftext|>')
             t.update()
     print(f"Converting {len(new_tokens)} tokens to str...")
     tokens_str = "".join(map(str, new_tokens))
