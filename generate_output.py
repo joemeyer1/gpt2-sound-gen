@@ -13,16 +13,16 @@ from data_parsing_helpers.vec_to_wav import write_header, int_to_hex
 
 
 def generate_wav(
-        model_folder="trained_model_10k_epochs",
-        tokenizer_file="aitextgen.tokenizer.json",
-        prompt="",
-        min_audio_length=10000,
-        window_length=16,
-        write_wav_to_filename="trash.wav",
-        overwrite_previous_model_data=False,
-        num_channels=1,
-        sample_rate=48000,
-        bits_per_sample=16,
+        model_folder: str,  # e.g. 'trained_model'
+        tokenizer_file: str,  # e.g. 'aitextgen.tokenizer.json'
+        write_wav_to_filename: str,  # e.g. 'generated_sound.wav'
+        min_audio_length: int,
+        window_length: int,
+        num_channels: int,
+        sample_rate: int,
+        bits_per_sample: int,
+        prompt: str = "",
+        overwrite_previous_model_data: bool = False,
 ) -> None:
     header_info = {
         "num_channels": num_channels,
@@ -56,13 +56,13 @@ def generate_wav(
 
 
 def _generate_raw(
-        model_folder="trained_model_10k_epochs",
-        tokenizer_file="aitextgen.tokenizer.json",
-        prompt="",
-        min_audio_length=10000,
-        window_length=16,
+        model_folder: str,
+        tokenizer_file: str,
+        prompt: str,
+        min_audio_length: int,
+        window_length: int,
+        overwrite_previous_model_data: bool,
         write_raw_output_to_filename=None,
-        overwrite_previous_model_data=True,
 ) -> str:
     """Returns clean model output, consisting of integers in range(0, 255) corresponding to pressure bins."""
 
@@ -102,7 +102,7 @@ def decode_generated_text(
         generated_text: str,
         bytes_per_sample: int,
         write_clean_output_to_filename: Optional[str] = None,
-        overwrite_previous_model_data: bool = True,
+        overwrite_previous_model_data: bool = False,
 ) -> bytes:
     """Restores binned audio data back to hexadecimal bytes."""
 
