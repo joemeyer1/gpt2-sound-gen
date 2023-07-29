@@ -100,24 +100,23 @@ def decode_generated_text(
         bytes_per_sample: int,
         write_clean_output_to_filename: Optional[str] = None,
         overwrite_previous_model_data: bool = True,
-) -> str:
+) -> bytes:
     """Restores binned audio data back to hexadecimal bytes."""
 
     restored_audio_pressures = restore_audio_pressures(generated_text=generated_text, bytes_per_sample=bytes_per_sample)
-    restored_audio_pressures_str = restored_audio_pressures.hex()
     if write_clean_output_to_filename:
         if not overwrite_previous_model_data:
             write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
         with open(write_clean_output_to_filename, 'w') as f:
             print(f"writing clean output to file '{write_clean_output_to_filename}'")
-            f.write(restored_audio_pressures_str)
+            f.write(restored_audio_pressures)
     else:
-        print(f"CLEAN:\n{restored_audio_pressures_str}\n")
-    return restored_audio_pressures_str
+        print(f"CLEAN:\n{restored_audio_pressures}\n")
+    return restored_audio_pressures
 
 
 def write_wav(
-        raw_pressures: str,
+        raw_pressures: bytes,
         write_wav_to_filename: str,
         n_pressure_samples: int,
         header_info=None,
@@ -137,10 +136,10 @@ def write_wav(
     print(header_str)
     whole_str = header_str + raw_pressures
     print(whole_str)
-    pretty_wav = add_spaces_and_linebreaks(whole_str)
-    print(pretty_wav)
-    with open(write_wav_to_filename, 'w') as f:
-        f.write(pretty_wav)
+    # pretty_wav = add_spaces_and_linebreaks(whole_str)
+    # print(pretty_wav)
+    with open(write_wav_to_filename, 'wb') as f:
+        f.write(whole_str)
 
 
 def get_clean_next_generated_text(generated_text: str) -> str:

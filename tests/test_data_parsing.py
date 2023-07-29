@@ -96,10 +96,10 @@ def test_bytes_to_pretty_str(
     header_info['chunk_size'] = len(data_bytes) + 36
     header_info['subchunk2size'] = len(data_bytes) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
     header_bytes = write_header(header_info)
-    whole_wav = header_bytes.hex() + data_bytes.hex()
-    pretty_wav = add_spaces_and_linebreaks(whole_wav)
-    with open(write_to_filename, 'w') as f:
-        f.write(pretty_wav)
+    whole_wav = header_bytes + data_bytes
+    # pretty_wav = add_spaces_and_linebreaks(whole_wav)
+    with open(write_to_filename, 'wb') as f:
+        f.write(whole_wav)
 
 
 def test_write_wav(
