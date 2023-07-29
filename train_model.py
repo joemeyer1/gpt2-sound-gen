@@ -4,6 +4,8 @@
 import os
 import fire
 
+from typing import Optional
+
 from aitextgen.aitextgen.TokenDataset import TokenDataset
 from aitextgen.aitextgen.tokenizers import train_tokenizer
 from aitextgen.aitextgen.utils import build_gpt2_config
@@ -15,18 +17,18 @@ from generate_output import generate_wav, make_name_unique
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def train_gpt2(
-    steps: int = 100,
-    n_max_files: int = 1,
-    in_wav_dir_name: str = "sound_data",
-    wav_str_filename: str = "sound.txt",
-    output_dir: str = "trained_model",
-    tokenizer_name: str = "aitextgen00",
-    use_previous_training_data: bool = True,
-    learning_rate=1e-3,
-    load_model_from_chkpt=None,
-    save_model_every_n_epochs=1000,
-    overwrite_previous_model=False,
+def train_model(
+    steps: int,
+    n_max_files: int,
+    in_wav_dir_name: str,
+    wav_str_filename: str,
+    output_dir: str,
+    tokenizer_name: str,
+    use_previous_training_data: bool,
+    learning_rate: float,
+    load_model_from_chkpt: Optional[str],
+    save_model_every_n_epochs: int,
+    overwrite_previous_model: bool,
 ) -> None:
 
     if use_previous_training_data:
@@ -80,4 +82,4 @@ def train_gpt2(
 
 
 if __name__ == "__main__":
-    fire.Fire(train_gpt2)
+    fire.Fire(train_model)
