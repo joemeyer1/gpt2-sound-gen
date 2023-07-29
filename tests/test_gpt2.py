@@ -21,6 +21,7 @@ class GPTTests(unittest.TestCase):
             load_model_from_chkpt=None,
             save_model_every_n_epochs=1,
             overwrite_previous_model=False,
+            block_size=64
         )
 
     def test_generate_gpt2(self):
@@ -29,7 +30,7 @@ class GPTTests(unittest.TestCase):
             tokenizer_file="aitextgen000.tokenizer.json",
             prompt="<|endoftext|>",
             min_audio_samples=100,
-            window_length=512,
+            window_length=60,
             write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/test_generate.wav",
             overwrite_previous_model_data=False,
             num_channels=1,
