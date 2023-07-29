@@ -54,7 +54,7 @@ def test_extract_data(read_wav_from_filename: str = "/Users/joemeyer/Documents/g
 
 def test_vec_to_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels_vec_to_wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_vec_to_wav",
 ) -> None:
     """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
@@ -86,7 +86,7 @@ def test_decode_generated_text(
 
 def test_bytes_to_pretty_str(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_pretty_str.wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_bytes_to_pretty_str.wav",
 ):
     raw_data_channels, header_info = extract_data(read_wav_from_filename)
     data_bytes = b''.join(map(
@@ -103,7 +103,7 @@ def test_bytes_to_pretty_str(
 
 def test_write_wav(
     read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
-    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_data_channels_test_write.wav",
+    write_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/violin_G4_phrase_forte_harmonic-glissando_test_write.wav",
 ) -> None:
     """Converts wav file to binned data, then converts it back to wav and writes it to output file."""
 
