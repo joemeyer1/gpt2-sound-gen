@@ -2,15 +2,14 @@
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
 import os
-from tqdm import tqdm
-
-from typing import Optional, List
+from typing import Optional
 
 import fire
-from aitextgen.aitextgen import aitextgen
+from tqdm import tqdm
 
-from data_parsing_helpers.vec_to_wav import write_header, str_to_hex, int_to_hex
+from aitextgen.aitextgen import aitextgen
 from data_parsing_helpers.file_helpers import unbin_data
+from data_parsing_helpers.vec_to_wav import write_header, int_to_hex
 
 
 def generate_wav(

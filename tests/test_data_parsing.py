@@ -3,16 +3,15 @@
 
 
 import unittest
+
 import numpy as np
 
 from data_parsing_helpers.data_fetcher import get_training_data
 from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_int
+from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 from data_parsing_helpers.vec_to_wav import vec_to_wav, int_to_hex, write_header
 from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
-from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
-
-from generate_gpt2_text import write_wav, decode_generated_text, add_spaces_and_linebreaks
-
+from generate_gpt2_text import write_wav, decode_generated_text
 
 
 class DataParsingTests(unittest.TestCase):
@@ -24,7 +23,6 @@ class DataParsingTests(unittest.TestCase):
         assert n_bytes == -256
         print(i)
 
-
     def test_int_to_hex(self):
         int_to_convert0 = 32767
         hex0 = int_to_hex(int_to_convert=int_to_convert0, bytes=2, signed=True)
@@ -32,7 +30,6 @@ class DataParsingTests(unittest.TestCase):
         int_to_convert1 = -256
         hex1 = int_to_hex(int_to_convert=int_to_convert1, bytes=2, signed=True)
         assert int.from_bytes(hex1, byteorder='little', signed=True) == int_to_convert1
-
 
     def test_bin_data(self):
         data = [-(16**i)/2 for i in range(0, 5)] + [(16**i)/2 for i in range(0, 5)]
@@ -44,7 +41,6 @@ class DataParsingTests(unittest.TestCase):
         print(reconstructed_data)
         assert np.sum(np.array(data) - np.array(reconstructed_data)) < 16**4
 
-
     def test_extract_data(self, read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav"):
         raw_data_channels, head_info = extract_data(read_wav_from_filename)
         print(raw_data_channels)
@@ -52,7 +48,6 @@ class DataParsingTests(unittest.TestCase):
         print(quantized_data_channels)
         reconstructed_data = unbin_data(quantized_data_channels[0])
         print(reconstructed_data)
-
 
     def test_vec_to_wav(
         self,
@@ -65,7 +60,6 @@ class DataParsingTests(unittest.TestCase):
         vec_to_wav(write_to_filename, header_info)
         print()
         # to test/verify, listen to the wav file it writes, and see if it sounds like the input one
-
 
     def test_decode_generated_text(
         self,
@@ -87,7 +81,6 @@ class DataParsingTests(unittest.TestCase):
             bytes_per_sample=header_info['bits_per_sample'] // 8,
         )
 
-
     def test_bytes_to_pretty_str(
         self,
         read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
@@ -105,7 +98,6 @@ class DataParsingTests(unittest.TestCase):
         with open(write_to_filename, 'wb') as f:
             f.write(whole_wav)
 
-
     def test_write_wav(
         self,
         read_wav_from_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy/violin_G4_phrase_forte_harmonic-glissando.wav",
@@ -122,16 +114,9 @@ class DataParsingTests(unittest.TestCase):
         )
         write_wav(raw_pressures=restored_wav, write_wav_to_filename=write_to_filename, header_info=header_info, n_pressure_samples=len(quantized_data_channels[0]))
 
-
-    # def test_restore_audio_pressures(self):
-    #     from generate_gpt2_text import restore_audio_pressures
-
-
-
     def test_wav_encoding(self):
         data = get_training_data("/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy", n_max_files=2)
         print(data)
-
 
     def test_wav_to_text(
         self,
