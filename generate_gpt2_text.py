@@ -132,12 +132,8 @@ def write_wav(
     header_info['chunk_size'] = (n_pressure_samples * 4) + 36
     header_info['subchunk2size'] = n_pressure_samples * 4
     header = write_header(header_info)
-    header_str = header.hex()
-    print(header_str)
-    whole_str = header_str + raw_pressures
+    whole_str = header + raw_pressures
     print(whole_str)
-    # pretty_wav = add_spaces_and_linebreaks(whole_str)
-    # print(pretty_wav)
     with open(write_wav_to_filename, 'wb') as f:
         f.write(whole_str)
 
