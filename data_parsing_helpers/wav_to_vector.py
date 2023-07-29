@@ -1,10 +1,11 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
-
 from typing import Tuple, Dict, Optional
 
-from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str
+import numpy as np
+
+from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str, bin_data
 
 
 def extract_header(hex_ls):
@@ -60,11 +61,12 @@ def extract_header(hex_ls):
     }
     return header_info, hex_ls, i
 
+
 def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
     num_channels = header_info['num_channels']
     binary_bits_per_sample = header_info['bits_per_sample']
-    assert binary_bits_per_sample % 4 == 0
-    hex_bits_per_sample = binary_bits_per_sample // 4  # 16 = 2**4
+    assert binary_bits_per_sample % 8 == 0
+    hex_bits_per_sample = binary_bits_per_sample // 8  # 16**2 = 2**8
     assert hex_bits_per_sample % num_channels == 0
     hex_bits_per_sample_per_channel = hex_bits_per_sample // num_channels
     from collections import defaultdict
@@ -75,14 +77,24 @@ def extract_body(hex_ls, i, header_info) -> Dict[int, list]:
             data_channels[channel].append(channel_sample)
     return data_channels
 
-def extract_data(
+
+def extract_binned_data(
         read_wav_from_filename: str,
         write_wav_to_filename: Optional[str] = None,
 ) -> Tuple[Dict[int, list], Dict[str, int]]:
+    """Extracts quantized audio data and header info."""
+
+    raw_data_channels, header_info = extract_data(read_wav_from_filename=read_wav_from_filename)
+
+    quantized_data_channels = {ix: bin_data(data_channel) for ix, data_channel in raw_data_channels.items()}
+
+    if write_wav_to_filename:
+        np.savetxt(fname=write_wav_to_filename, X=np.array(list(quantized_data_channels.values())).transpose(), fmt='%d', delimiter=' ')
+    return quantized_data_channels, header_info
+
+
+def extract_data(read_wav_from_filename: str) -> Tuple[Dict[int, list], Dict[str, int]]:
     data_hex_ls = file_to_hex_ls(read_wav_from_filename)
     header_info, hex_ls, i = extract_header(data_hex_ls)
     data_channels = extract_body(hex_ls, i, header_info)
-    if write_wav_to_filename:
-        import numpy as np
-        np.savetxt(fname=write_wav_to_filename, X=np.array(list(data_channels.values())).transpose(), fmt='%d', delimiter=' ')
-    return data_channels, header_info
+    return data_channels,  header_info

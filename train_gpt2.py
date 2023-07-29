@@ -4,10 +4,10 @@
 import os
 import fire
 
-from aitextgen import aitextgen
-from aitextgen.TokenDataset import TokenDataset
-from aitextgen.tokenizers import train_tokenizer
-from aitextgen.utils import build_gpt2_config
+from aitextgen.aitextgen.TokenDataset import TokenDataset
+from aitextgen.aitextgen.tokenizers import train_tokenizer
+from aitextgen.aitextgen.utils import build_gpt2_config
+from aitextgen.aitextgen import aitextgen
 
 from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
 from generate_gpt2_text import generate_wav, make_name_unique
@@ -78,14 +78,14 @@ def train_gpt2(
         save_every=save_model_every_n_epochs,
     )
 
-    generate_wav(
-        model_folder=output_dir,
-        tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
-        prompt="",
-        min_text_length=300000,
-        window_length=16,
-        overwrite_previous_model_data=overwrite_previous_model,
-    )
+    # generate_wav(
+    #     model_folder=output_dir,
+    #     tokenizer_file=f"{tokenizer_prefix}.tokenizer.json",
+    #     prompt="",
+    #     min_text_length=300000,
+    #     window_length=16,
+    #     overwrite_previous_model_data=overwrite_previous_model,
+    # )
 
     # generate_text(
     #     model_folder=output_dir,

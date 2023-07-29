@@ -3,12 +3,12 @@
 
 
 from data_parsing_helpers.vec_to_wav import vec_to_wav
-from data_parsing_helpers.wav_to_vector import extract_data
+from data_parsing_helpers.wav_to_vector import extract_binned_data
 
 
 def main(read_wav_from_filename):
     write_wav_to_filename = f"{read_wav_from_filename.split('.')[0]}_data_channels"
-    _, header_info = extract_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=write_wav_to_filename)
+    _, header_info = extract_binned_data(read_wav_from_filename=read_wav_from_filename, write_wav_to_filename=write_wav_to_filename)
     vec_to_wav(write_wav_to_filename, header_info)
 
 
