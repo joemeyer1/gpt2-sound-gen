@@ -36,13 +36,16 @@ def generate_wav(
         prompt=prompt,
         min_text_length=min_text_length,
         window_length=window_length,
-        bytes_per_sample=header_info['bits_per_sample'] // 8,
         overwrite_previous_model_data=overwrite_previous_model_data,
+    )
+    restored_wav = decode_generated_text(
+        generated_text=clean_generated_wav_txt,
+        bytes_per_sample=header_info['bits_per_sample'] // 8,
     )
     if not overwrite_previous_model_data:
         write_wav_to_filename = make_name_unique(write_wav_to_filename)
     print(f"writing wav file '{write_wav_to_filename}'")
-    write_wav(wav_txt=clean_generated_wav_txt, write_wav_to_filename=write_wav_to_filename, header_info=header_info)
+    write_wav(raw_pressures=restored_wav, write_wav_to_filename=write_wav_to_filename, header_info=header_info)
 
 
 def generate_text(
@@ -51,17 +54,14 @@ def generate_text(
         prompt="",
         min_text_length=10000,
         window_length=16,
-        bytes_per_sample: int = 2,
         write_raw_output_to_filename=None,
-        write_clean_output_to_filename=None,
-        overwrite_previous_model_data=False,
-) -> bytes:
+        overwrite_previous_model_data=True,
+) -> str:
+    """Returns clean model output, consisting of integers in range(0, 255) corresponding to pressure bins."""
 
-    if overwrite_previous_model_data:
+    if not overwrite_previous_model_data:
         if write_raw_output_to_filename:
             write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
-        if write_clean_output_to_filename:
-            write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     raw_generated_wav_txt = prompt
@@ -86,19 +86,31 @@ def generate_text(
             f.write(raw_generated_wav_txt)
     else:
         print(f"RAW:\n{raw_generated_wav_txt}\n")
-    # clean_generated_wav_txt = clean_model_output(raw_generated_wav_txt)
-    clean_generated_wav_txt = raw_generated_wav_txt
+    return raw_generated_wav_txt
 
-    clean_generated_wav_txt = format_wav_body(generated_text=clean_generated_wav_txt, bytes_per_sample=bytes_per_sample)
+
+def decode_generated_text(
+        generated_text: str,
+        bytes_per_sample: int,
+        write_clean_output_to_filename: Optional[str] = None,
+        overwrite_previous_model_data: bool = True,
+) -> str:
+    """Restores binned audio data back to hexadecimal bytes."""
+
+    restored_audio_pressures = restore_audio_pressures(generated_text=generated_text, bytes_per_sample=bytes_per_sample)
+    pretty_restored_audio_pressures = bytes_to_pretty_str(restored_audio_pressures)
     if write_clean_output_to_filename:
-        with open(write_clean_output_to_filename, 'wb') as f:
+        if not overwrite_previous_model_data:
+            write_clean_output_to_filename = make_name_unique(write_clean_output_to_filename)
+        with open(write_clean_output_to_filename, 'w') as f:
             print(f"writing clean output to file '{write_clean_output_to_filename}'")
-            f.write(clean_generated_wav_txt)
+            f.write(pretty_restored_audio_pressures)
     else:
-        print(f"CLEAN:\n{clean_generated_wav_txt}\n")
-    return clean_generated_wav_txt
+        print(f"CLEAN:\n{pretty_restored_audio_pressures}\n")
+    return pretty_restored_audio_pressures
 
-def write_wav(wav_txt: bytes, write_wav_to_filename: str, header_info=None):
+
+def write_wav(raw_pressures: str, write_wav_to_filename: str, header_info=None):
     if not header_info:
         header_info = {
             "num_channels": 1,
@@ -107,15 +119,14 @@ def write_wav(wav_txt: bytes, write_wav_to_filename: str, header_info=None):
         }
     # wav_txt = wav_txt.replace(' ', '').replace('\n', '')
     # len_txt = len(wav_txt)
-    header_info['chunk_size'] = len(wav_txt) + 36
-    header_info['subchunk2size'] = len(wav_txt) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
-    header_str = write_header(header_info)
+    header_info['chunk_size'] = len(raw_pressures) + 36
+    header_info['subchunk2size'] = len(raw_pressures) * header_info['num_channels'] * (header_info['bits_per_sample'] // 8)
+    header = write_header(header_info)
+    header_str = bytes_to_pretty_str(header)
     print(header_str)
-    body_str = wav_txt
-    # body_str = str_to_hex(wav_txt)
-    whole_str = header_str + body_str
+    whole_str = header_str + raw_pressures
     print(whole_str)
-    with open(write_wav_to_filename, 'wb') as f:
+    with open(write_wav_to_filename, 'w') as f:
         f.write(whole_str)
 
 
@@ -134,6 +145,7 @@ def get_clean_next_generated_text(generated_text: str) -> str:
     first_ints_chunk = get_first_ints_chunk(generated_text)
     return str(min(int(first_ints_chunk), 255))
 
+
 def clean_model_output(model_output: str, bits_per_word=8) -> str:
     clean_output = ""
     model_output_words = model_output.split('-')
@@ -145,7 +157,7 @@ def clean_model_output(model_output: str, bits_per_word=8) -> str:
     return clean_output
 
 
-def format_wav_body(generated_text: str, bytes_per_sample: int) -> bytes:
+def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes:
     """Returns a formatted wav body given hex text like expected gpt2 output."""
 
     generated_pressures = list(map(int, generated_text.split('-')[:-1]))
@@ -156,6 +168,22 @@ def format_wav_body(generated_text: str, bytes_per_sample: int) -> bytes:
     ))
     return hex_pressures
 
+
+def bytes_to_pretty_str(audio_pressures: bytes) -> str:
+    audio_pressures_ugly_str: str = audio_pressures.hex()
+
+    audio_pressures_pretty: str = ''
+    for i, ch in enumerate(audio_pressures_ugly_str):
+        if i != 0:
+            if (i % 32) == 0:
+                audio_pressures_pretty += '\n'
+            elif (i % 4) == 0:
+                audio_pressures_pretty += ' '
+
+        audio_pressures_pretty += ch
+
+    return audio_pressures_pretty
+    # ugly_str = str(audio_pressures).replace('\\', '').replace('b', '').replace("\'", '').replace('x', '')
     # wav_body = ""
     # return hex_pressures
     # i = 0
