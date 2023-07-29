@@ -6,9 +6,9 @@ from generate_gpt2_text import generate_wav
 
 def test_generate_gpt2():
     generate_wav(
-        model_folder="trained_percussion_model0",
+        model_folder="trained_percussion_model1",
         tokenizer_file="percussion_tokenizer0.tokenizer.json",
-        prompt="",
+        prompt="<|endoftext|>",
         min_audio_length=1000,
         window_length=32,
         write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_percussion/generated_percussion.wav",
@@ -17,6 +17,7 @@ def test_generate_gpt2():
         sample_rate=48000,
         bits_per_sample=16,
     )
+
 
 if __name__ == '__main__':
     test_generate_gpt2()

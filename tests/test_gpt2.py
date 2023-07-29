@@ -25,7 +25,7 @@ class GPTTests(unittest.TestCase):
         generate_wav(
             model_folder="trained_model7",
             tokenizer_file="aitextgen000.tokenizer.json",
-            prompt="",
+            prompt="<|endoftext|>",
             min_audio_length=100,
             window_length=16,
             write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/test_generate.wav",

@@ -37,6 +37,8 @@ def generate_wav(
         window_length=window_length,
         overwrite_previous_model_data=overwrite_previous_model_data,
     )
+    if prompt == '<|endoftext|>':
+        clean_generated_wav_txt = clean_generated_wav_txt[len(prompt):]
     n_pressure_samples = clean_generated_wav_txt.count('-')
     restored_wav = decode_generated_text(
         generated_text=clean_generated_wav_txt,
