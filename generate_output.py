@@ -73,7 +73,7 @@ def _generate_raw(
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
     generated_data = prompt
     audio_length = 0
-    with tqdm(total=min_audio_length, desc="generating gpt2 output tokens") as t:
+    with tqdm(total=min_audio_length, desc="generating output tokens") as t:
         while audio_length < min_audio_length:
             generated_text_up_to_prompt = generated_data[:-window_length]
             next_generated_text_prompt = generated_data[-window_length:]
@@ -130,8 +130,7 @@ def write_wav(
             "sample_rate": 48000,
             "bits_per_sample": 16,
         }
-    # wav_txt = wav_txt.replace(' ', '').replace('\n', '')
-    # len_txt = len(wav_txt)
+
     header_info['chunk_size'] = (n_pressure_samples * 4) + 36
     header_info['subchunk2size'] = n_pressure_samples * 4
     header = write_header(header_info)
@@ -169,7 +168,7 @@ def clean_model_output(model_output: str, bits_per_word=8) -> str:
 
 
 def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes:
-    """Returns a formatted wav body given hex text like expected gpt2 output."""
+    """Returns a formatted wav body given hex text like expected generated output."""
 
     generated_pressures = list(map(int, generated_text.split('-')[:-1]))
     unbinned_pressures = unbin_data(generated_pressures)
@@ -192,20 +191,7 @@ def add_spaces_and_linebreaks(audio_pressures: bytes) -> str:
         audio_with_spaces_and_linebreaks += ch
 
     return audio_with_spaces_and_linebreaks
-    # ugly_str = str(audio_pressures).replace('\\', '').replace('b', '').replace("\'", '').replace('x', '')
-    # wav_body = ""
-    # return hex_pressures
-    # i = 0
-    # for hex_pressure in hex_pressures:
-    #     int_to_hex(int_to_convert=word, bytes=bytes_per_sample, signed=True)
-    #     worda, wordb = word[:4], word[4:]
-    #     wav_body += hex_pressure + " "
-    #     i += 1
-    #     if not i % 4:
-    #         wav_body += '\n'
-    #     else:
-    #         wav_body += ' '
-    # return wav_body
+
 
 def make_name_unique(name: str) -> str:
 
