@@ -83,7 +83,8 @@ def _generate_raw(
                 min_length=4,
                 # batch_size=100,
                 prompt=next_generated_text_prompt,
-                return_as_list=True
+                return_as_list=True,
+                skip_special_tokens=False,
             )[0][len(next_generated_text_prompt):]
             clean_next_generated_bin = get_clean_next_generated_text(next_generated_text)
             if clean_next_generated_bin != '':
