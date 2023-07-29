@@ -21,10 +21,10 @@ def test_train_gpt2():
 
 def test_generate_gpt2():
     generate_wav(
-        model_folder="trained_model5",
+        model_folder="trained_model7",
         tokenizer_file="aitextgen000.tokenizer.json",
         prompt="",
-        min_text_length=1,
+        min_text_length=100,
         window_length=16,
         write_wav_to_filename="trash.wav",
         overwrite_previous_model_data=False,
