@@ -29,7 +29,7 @@ def generate_wav(
         "sample_rate": sample_rate,
         "bits_per_sample": bits_per_sample,
     }
-    clean_generated_wav_txt = generate_text(
+    clean_generated_wav_txt = _generate_raw(
         model_folder=model_folder,
         tokenizer_file=tokenizer_file,
         prompt=prompt,
@@ -55,7 +55,7 @@ def generate_wav(
     )
 
 
-def generate_text(
+def _generate_raw(
         model_folder="trained_model_10k_epochs",
         tokenizer_file="aitextgen.tokenizer.json",
         prompt="",
