@@ -7,7 +7,9 @@ from typing import Optional
 import fire
 from tqdm import tqdm
 
+from aitextgen.aitextgen.utils import model_max_length
 from aitextgen.aitextgen import aitextgen
+
 from data_parsing_helpers.file_helpers import unbin_data
 from data_parsing_helpers.vec_to_wav import write_header, int_to_hex
 
@@ -71,6 +73,11 @@ def _generate_raw(
             write_raw_output_to_filename = make_name_unique(write_raw_output_to_filename)
 
     ai = aitextgen(model_folder=model_folder, tokenizer_file=tokenizer_file,)
+
+    max_block_size = model_max_length(ai.model.config)
+    assert window_length + 4 < max_block_size, f"window_length + 4 generated chars: {window_length + 4} " \
+                                               f"cannot be greater than the max tokens model can handle: {max_block_size}"
+
     generated_data = prompt
     audio_length = 0
     with tqdm(total=min_audio_length, desc="generating output tokens") as t:

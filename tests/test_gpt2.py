@@ -30,7 +30,7 @@ class GPTTests(unittest.TestCase):
             tokenizer_file="aitextgen000.tokenizer.json",
             prompt="<|endoftext|>",
             min_audio_samples=100,
-            window_length=60,
+            window_length=59,
             write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/test_generate.wav",
             overwrite_previous_model_data=False,
             num_channels=1,
