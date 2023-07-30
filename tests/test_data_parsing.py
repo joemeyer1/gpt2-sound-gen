@@ -22,10 +22,10 @@ class DataParsingTests(unittest.TestCase):
 
     def test_int_to_hex(self):
         int_to_convert0 = 32767
-        hex0 = int_to_hex(int_to_convert=int_to_convert0, bytes=2, signed=True)
+        hex0 = int_to_hex(int_to_convert=int_to_convert0, n_bytes=2, signed=True)
         assert int.from_bytes(hex0, byteorder='little', signed=True) == int_to_convert0
         int_to_convert1 = -256
-        hex1 = int_to_hex(int_to_convert=int_to_convert1, bytes=2, signed=True)
+        hex1 = int_to_hex(int_to_convert=int_to_convert1, n_bytes=2, signed=True)
         assert int.from_bytes(hex1, byteorder='little', signed=True) == int_to_convert1
 
     def test_bin_data(self):
@@ -53,7 +53,7 @@ class DataParsingTests(unittest.TestCase):
     ):
         raw_data_channels, header_info = extract_data(read_wav_from_filename)
         data_bytes = b''.join(map(
-            lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, bytes=2, signed=True),
+            lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, n_bytes=2, signed=True),
             raw_data_channels[0],
         ))
         header_info['chunk_size'] = len(data_bytes) + 36

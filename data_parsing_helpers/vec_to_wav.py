@@ -7,16 +7,16 @@ from data_parsing_helpers.file_helpers import unbin_data
 
 
 def vec_to_wav(
-        vec_filename,  # e.g. "violin_Gs3_1_piano_arco-sul-tasto_data_channels"
-        header_info,
-):
+        vec_filename: str,  # excluding extension
+        header_info: dict,
+) -> bytes:
     vec = np.loadtxt(f"{vec_filename}.txt", dtype=int)
     unbinned_vec = unbin_data(vec.tolist())
     header_info['chunk_size'] = (len(unbinned_vec) * 4) + 36
     header_info['subchunk2size'] = len(unbinned_vec) * 4
     hex_str = write_header(header_info)  # e.g.chunk_size=259312, num_channels=1, sample_rate=44100, bits_per_sample=16, subchunk2size=258048
     for n in unbinned_vec:
-        hex_str += int_to_hex(int_to_convert=n, bytes=header_info['bits_per_sample'] // 8, signed=True)
+        hex_str += int_to_hex(int_to_convert=n, n_bytes=header_info['bits_per_sample'] // 8, signed=True)
 
     # hex_str += bytearray(vec)
     with open(f"{vec_filename}.wav", 'wb') as f:
@@ -24,7 +24,7 @@ def vec_to_wav(
     return hex_str
 
 
-def write_header(header_info: dict):
+def write_header(header_info: dict) -> bytes:
     num_channels = header_info['num_channels']
     sample_rate = header_info['sample_rate']
     bits_per_sample = header_info['bits_per_sample']
@@ -50,13 +50,13 @@ def write_header(header_info: dict):
     return hex_str
 
 
-def str_to_hex(str):
+def str_to_hex(s: str) -> bytes:
     hex_str = b''
-    for s in str:
-        hex_str += int_to_hex(ord(s), bytes=1)
+    for ss in s:
+        hex_str += int_to_hex(ord(ss), n_bytes=1)
     return hex_str
 
 
-def int_to_hex(int_to_convert, bytes, signed: bool = False, byteorder='little'):
-    ret = (int(int_to_convert)).to_bytes(bytes, byteorder=byteorder, signed=signed)
+def int_to_hex(int_to_convert: int, n_bytes: int, signed: bool = False, byteorder: str = 'little') -> bytes:
+    ret = (int(int_to_convert)).to_bytes(n_bytes, byteorder=byteorder, signed=signed)
     return ret

@@ -186,7 +186,7 @@ def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes
     generated_pressures = list(map(int, generated_text.split('-')[:-1]))
     unbinned_pressures = unbin_data(generated_pressures)
     hex_pressures = b''.join(map(
-        lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, bytes=bytes_per_sample, signed=True),
+        lambda int_to_convert: int_to_hex(int_to_convert=int_to_convert, n_bytes=bytes_per_sample, signed=True),
         unbinned_pressures,
     ))
     return hex_pressures
