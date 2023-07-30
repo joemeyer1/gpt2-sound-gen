@@ -80,24 +80,27 @@ def _generate_raw(
 
     generated_data = prompt
     audio_length = 0
-    with tqdm(total=min_audio_length, desc="generating output tokens") as t:
-        while audio_length < min_audio_length:
-            generated_text_up_to_prompt = generated_data[:-window_length]
-            next_generated_text_prompt = generated_data[-window_length:]
-            next_generated_text = ai.generate(
-                n=1,
-                max_length=512,
-                min_length=4,
-                # batch_size=100,
-                prompt=next_generated_text_prompt,
-                return_as_list=True,
-                skip_special_tokens=False,
-            )[0][len(next_generated_text_prompt):]
-            clean_next_generated_bin = get_clean_next_generated_text(next_generated_text)
-            if clean_next_generated_bin != '':
-                generated_data = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_bin + '-'
-                audio_length += 1
-                t.update()
+    try:
+        with tqdm(total=min_audio_length, desc="generating output tokens") as t:
+            while audio_length < min_audio_length:
+                generated_text_up_to_prompt = generated_data[:-window_length]
+                next_generated_text_prompt = generated_data[-window_length:]
+                next_generated_text = ai.generate(
+                    n=1,
+                    max_length=512,
+                    min_length=4,
+                    # batch_size=100,
+                    prompt=next_generated_text_prompt,
+                    return_as_list=True,
+                    skip_special_tokens=False,
+                )[0][len(next_generated_text_prompt):]
+                clean_next_generated_bin = get_clean_next_generated_text(next_generated_text)
+                if clean_next_generated_bin != '':
+                    generated_data = generated_text_up_to_prompt + next_generated_text_prompt + clean_next_generated_bin + '-'
+                    audio_length += 1
+                    t.update()
+    except KeyboardInterrupt:
+        print(f"KeyboardInterrupt\ngenerated_data: \n{generated_data}")
     if write_raw_output_to_filename:
         print(f"writing raw output to file '{write_raw_output_to_filename}'")
         with open(write_raw_output_to_filename, 'w') as f:

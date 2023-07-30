@@ -72,7 +72,7 @@ def get_n_bytes_str(n: int, hex_ls: List[str], i: int) -> Tuple[str, int]:
 def bin_data(wav_data: List[int], n_bins: int = 256, n_bits: int = 16) -> List[int]:
     """Takes wav data with real integer values and returns binned/simplified representation."""
 
-    max_pressure: int = 2**(n_bits - 1)
+    max_pressure: int = 2 ** (n_bits - 1)
 
     def standardize_pressure(pressure: int) -> float:
         return pressure / max_pressure
