@@ -1,11 +1,56 @@
 #!usr/bin/env python3
 # Copyright (c) Joe Meyer (2020). All rights reserved.
 
+
+import os
 from typing import Tuple, Dict, Optional
 
 import numpy as np
 
 from data_parsing_helpers.file_helpers import file_to_hex_ls, get_n_bytes, get_n_bytes_int, get_n_bytes_str, bin_data
+
+
+def format_data_for_training(
+        in_wav_dir_name: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
+        output_filename: str = "sound.txt",
+        n_max_files: int = 1,
+) -> None:
+
+    training_data = get_training_data(read_wav_from_dir=in_wav_dir_name, n_max_files=n_max_files)
+    new_tokens = ['<|endoftext|>']
+    for file_tokens in training_data:
+        for token in file_tokens:
+            new_tokens += [int(token), '-']
+        new_tokens.append('<|endoftext|>')
+    print(f"Converting {len(new_tokens)} tokens to str...")
+    tokens_str = "".join(map(str, new_tokens))
+    print(f"Writing {len(tokens_str)} chars to {output_filename}...")
+    with open(output_filename, 'w') as f:
+        f.write(tokens_str)
+
+
+def get_training_data(read_wav_from_dir: str, n_max_files: int = 0) -> np.array:
+    """Returns 2D array of 1D vectors of ints representing wav files in directory, up to n_max_files.
+
+    Args:
+        read_wav_from_dir: Directory to read wav files from.
+        n_max_files: Max number of files to read. Reads all files in directory if set to 0.
+    """
+
+    vectors_list = []
+    filenames = [f for f in os.listdir(read_wav_from_dir) if f != '.DS_Store']
+    np.random.shuffle(filenames)
+    for filename in filenames[-n_max_files:]:
+        read_wav_from_path = f"{read_wav_from_dir}/{filename}"
+        data_channels, _ = extract_binned_data(read_wav_from_filename=read_wav_from_path)
+        flat_data_channels = np.array(list(data_channels.values())).flatten()
+        vectors_list.append(flat_data_channels)
+    biggest_vector_len = max([len(vec) for vec in vectors_list])
+    for i in range(len(vectors_list)):
+        padding = [0] * (biggest_vector_len - len(vectors_list[i]))
+        vectors_list[i] = np.concatenate((vectors_list[i], padding))
+    vectors = np.stack(vectors_list)
+    return vectors
 
 
 def extract_header(hex_ls):

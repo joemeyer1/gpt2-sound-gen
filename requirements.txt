@@ -2,6 +2,13 @@
 # aitextgen==0.5.2
 # NOTE: aitextgen must be cloned from git repo. pip installed versions appear broken.
 
+# To make this work, I
+#   1. created a new virtual env with python3.8,
+#   2. Cloned from https://github.com/minimaxir/aitextgen.git (on july 29, 2023, i.e. commit 8fb636407d24540b6c1cd22a9ab9219b749d0a24)
+#   3. installed pytorch-lightning==1.8.0 (and NOT a new one!)
+
+
+
 pytorch-lightning==1.8.0
 
 
