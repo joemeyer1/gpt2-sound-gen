@@ -8,7 +8,7 @@ import numpy as np
 
 from data_parsing_helpers.file_helpers import bin_data, unbin_data, get_n_bytes_int
 from data_parsing_helpers.vec_to_wav import int_to_hex, write_header
-from data_parsing_helpers.wav_to_vector import extract_data
+from data_parsing_helpers.wav_to_vec import extract_data
 
 
 class DataParsingTests(unittest.TestCase):

@@ -10,7 +10,7 @@ def test_generate_gpt2():
         tokenizer_file="percussion_tokenizer0.tokenizer.json",
         prompt="<|endoftext|>",
         min_audio_samples=100000,
-        window_length=32,
+        window_length=59,
         write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_percussion/generated_percussion.wav",
         overwrite_previous_model_data=False,
         num_channels=1,

@@ -9,7 +9,7 @@ from data_parsing_helpers.file_helpers import unbin_data
 def vec_to_wav(
         vec_filename,  # e.g. "violin_Gs3_1_piano_arco-sul-tasto_data_channels"
         header_info,
-):  # "test_data_channels"):
+):
     vec = np.loadtxt(f"{vec_filename}.txt", dtype=int)
     unbinned_vec = unbin_data(vec.tolist())
     header_info['chunk_size'] = (len(unbinned_vec) * 4) + 36
@@ -22,6 +22,7 @@ def vec_to_wav(
     with open(f"{vec_filename}.wav", 'wb') as f:
         f.write(hex_str)
     return hex_str
+
 
 def write_header(header_info: dict):
     num_channels = header_info['num_channels']

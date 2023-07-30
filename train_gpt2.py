@@ -2,17 +2,16 @@
 # Copyright (c) Joe Meyer (2021). All rights reserved.
 
 import os
-import fire
-
 from typing import Optional
 
+import fire
+
+from aitextgen.aitextgen import aitextgen
 from aitextgen.aitextgen.TokenDataset import TokenDataset
 from aitextgen.aitextgen.tokenizers import train_tokenizer
 from aitextgen.aitextgen.utils import build_gpt2_config
-from aitextgen.aitextgen import aitextgen
-
-from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
-from generate_output import generate_wav, make_name_unique
+from data_parsing_helpers.wav_to_vec import format_data_for_training
+from generate_output import make_name_unique
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -37,9 +36,9 @@ def train_gpt2(
         print(f"using previous training data file: {wav_str_filename}")
     else:
         print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
-        convert_wav_to_text_file(
+        format_data_for_training(
             in_wav_dir_name=in_wav_dir_name,
-            out_text_filename=wav_str_filename,
+            output_filename=wav_str_filename,
             n_max_files=n_max_files,
         )
 

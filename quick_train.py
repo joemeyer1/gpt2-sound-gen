@@ -17,7 +17,7 @@ def quick_train():
         load_model_from_chkpt="trained_percussion_model3",
         save_model_every_n_epochs=1000,
         overwrite_previous_model=False,
-        block_size=64
+        block_size=64,
     )
 
 

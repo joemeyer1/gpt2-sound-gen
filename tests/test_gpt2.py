@@ -3,8 +3,8 @@
 
 import unittest
 
-from train_gpt2 import train_gpt2
 from generate_output import generate_wav
+from train_gpt2 import train_gpt2
 
 
 class GPTTests(unittest.TestCase):

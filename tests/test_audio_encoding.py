@@ -4,11 +4,11 @@
 
 import unittest
 
-from data_parsing_helpers.data_fetcher import get_training_data
+from data_parsing_helpers.wav_to_vec import get_training_data
 from data_parsing_helpers.file_helpers import bin_data
-from data_parsing_helpers.make_wav_str_file import convert_wav_to_text_file
+from data_parsing_helpers.wav_to_vec import format_data_for_training
 from data_parsing_helpers.vec_to_wav import vec_to_wav
-from data_parsing_helpers.wav_to_vector import extract_data, extract_binned_data
+from data_parsing_helpers.wav_to_vec import extract_data, extract_binned_data
 from generate_output import write_wav, decode_generated_text, get_clean_next_generated_text
 
 
@@ -66,9 +66,9 @@ class AudioEncodingTests(unittest.TestCase):
         in_wav_dir_name: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
         wav_str_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/sound.txt",
     ):
-        convert_wav_to_text_file(
+        format_data_for_training(
             in_wav_dir_name=in_wav_dir_name,
-            out_text_filename=wav_str_filename,
+            output_filename=wav_str_filename,
             n_max_files=n_max_files,
         )
 
