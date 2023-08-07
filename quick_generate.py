@@ -6,8 +6,8 @@ from main.generate_output import generate_wav
 
 def test_generate_gpt2():
     generate_wav(
-        model_folder="/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model3",
-        tokenizer_file="/Users/joemeyer/Documents/gpt2-sound-gen/strings_tokenizer_short0.tokenizer.json",
+        model_folder="trained_strings_model3",
+        tokenizer_file="strings_tokenizer_short0.tokenizer.json",
         prompt="<|endoftext|>",
         min_audio_samples=10000,
         window_length=1000,

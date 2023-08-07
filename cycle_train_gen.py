@@ -35,7 +35,7 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
         print('\n\nGENERATING::\n')
         generate_wav(
             model_folder=model_data.model_dir,
-            tokenizer_file=f"/Users/joemeyer/Documents/gpt2-sound-gen/{model_data.tokenizer_filename}.tokenizer.json",
+            tokenizer_file=f"{model_data.tokenizer_filename}.tokenizer.json",
             prompt="<|endoftext|>",
             min_audio_samples=100,
             window_length=100,
