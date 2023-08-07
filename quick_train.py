@@ -9,7 +9,7 @@ def quick_train():
         steps=100000,
         n_max_files=150,
         in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_strings",
-        formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_strings/generated_strings_short_model3.txt",
+        formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/formatted_training_data_strings/generated_strings_short_model3.txt",
         output_dir="/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model",
         tokenizer_name='strings_tokenizer_short0',
         use_previous_training_data=False,
