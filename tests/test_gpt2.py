@@ -26,7 +26,7 @@ class GPTTests(unittest.TestCase):
 
     def test_generate_gpt2(self):
         generate_wav(
-            model_folder="trained_model7",
+            model_folder="/Users/joemeyer/Documents/gpt2-sound-gen/tests/trained_model7",
             tokenizer_file="aitextgen000.tokenizer.json",
             prompt="<|endoftext|>",
             min_audio_samples=100,
