@@ -9,7 +9,7 @@ from data_parsing_helpers.file_helpers import bin_data
 from data_parsing_helpers.wav_to_vec import format_data_for_training
 from data_parsing_helpers.vec_to_wav import vec_to_wav
 from data_parsing_helpers.wav_to_vec import extract_data, extract_binned_data
-from generate_output import write_wav, decode_generated_text, get_clean_next_generated_text
+from main.generate_output import write_wav, decode_generated_text, get_clean_next_generated_text
 
 
 class AudioEncodingTests(unittest.TestCase):

@@ -1,7 +1,7 @@
 #!usr/bin/env python3
 # Copyright (c) Joseph Meyer (2020-2023). All rights reserved.
 
-from train_gpt2 import train_gpt2
+from main.train_gpt2 import train_gpt2
 
 
 def quick_train():

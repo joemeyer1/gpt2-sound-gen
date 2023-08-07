@@ -13,7 +13,7 @@ from aitextgen.aitextgen.TokenDataset import TokenDataset
 from aitextgen.aitextgen.tokenizers import train_tokenizer
 from aitextgen.aitextgen.utils import build_gpt2_config
 from data_parsing_helpers.wav_to_vec import format_data_for_training
-from generate_output import make_name_unique
+from main.generate_output import make_name_unique
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
