@@ -31,6 +31,11 @@ def train_gpt2(
     block_size: Optional[int] = None,  # only relevant if training new model
 ) -> None:
 
+    if block_size:
+        _MAX_BLOCK_SIZE = 1024
+        assert block_size <= _MAX_BLOCK_SIZE, f"block_size: {block_size} cannot exceed max_block_size: {_MAX_BLOCK_SIZE} -" \
+                                          f" pre-trained GPT-2 cannot handle more tokens due to limited receptive field"
+
     if use_previous_training_data:
         assert os.path.exists(wav_str_filename), f"training data {wav_str_filename} not found"
         print(f"using previous training data file: {wav_str_filename}")
