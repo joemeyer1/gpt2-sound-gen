@@ -9,11 +9,10 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
 
     base_model_dir = "/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model_cycle"
     model_data = ModelData(
-        tokenizer_filename='strings_tokenizer_cycle',
+        tokenizer_filename="/Users/joemeyer/Documents/gpt2-sound-gen/tokenizers/strings_tokenizer_cycle",
         model_dir=base_model_dir,
     )
     load_model_from_chkpt = None
-    use_previous_training_data = False
 
     for i in range(n_cycles):
         print('\n\nTRAINING::\n')
@@ -26,7 +25,7 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
             formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/formatted_training_data_strings/generated_strings_short_cycle_model.txt",
             output_dir=base_model_dir,
             tokenizer_name=model_data.tokenizer_filename,
-            use_previous_training_data=use_previous_training_data,
+            use_previous_training_data=False,
             learning_rate=1e-3,
             load_model_from_chkpt=load_model_from_chkpt,
             save_model_every_n_epochs=2,
@@ -47,7 +46,6 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
             bits_per_sample=16,
         )
         load_model_from_chkpt = model_data.model_dir
-        use_previous_training_data = True
 
 
 if __name__ == '__main__':
