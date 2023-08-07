@@ -1,6 +1,6 @@
 # Generating Audio Samples with Machine Learning
  
-I started this project in 2020, paused development for a couple years, then revisited it in 2023. It went through a few different iterations.
+I started this project in 2020, paused development for a couple years, then revisited it in 2023 (it is still a work in progress). It went through a few different iterations.
 
 **Initial, naive implementation:** Generate raw wav with GPT-2.<br>
 
@@ -11,7 +11,7 @@ I started this project in 2020, paused development for a couple years, then revi
    - This yields playable audio, but it generally sounds like white noise and doesn’t learn well with the limited resources I tried allocating to the task.
 
 
-**Current iteration:** Predict position bin with GPT-2.<br>
+**Current iteration:** Predict pressure position bin with GPT-2.<br>
 
   - In the WaveNet paper, they found that bucketizing the pressure positions into bins and approaching as a classification problem worked better than attempting linear regression, since learning pressure bins independently avoids potentially unhelpful assumptions inherent to linear regression.
 
