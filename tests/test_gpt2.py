@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-# Copyright (c) Joseph Meyer. All rights reserved.
+# Copyright (c) Joseph Meyer (2020). All rights reserved.
 
 import unittest
 
@@ -13,7 +13,7 @@ class GPTTests(unittest.TestCase):
             steps=1,
             n_max_files=1,
             in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
-            wav_str_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/generated_sound_toy.txt",
+            formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/generated_sound_toy.txt",
             output_dir="/Users/joemeyer/Documents/gpt2-sound-gen/trained_model_toy",
             tokenizer_name="aitextgen000.tokenizer.json",
             use_previous_training_data=False,
@@ -26,7 +26,7 @@ class GPTTests(unittest.TestCase):
 
     def test_generate_gpt2(self):
         generate_wav(
-            model_folder="trained_model7",
+            model_folder="/Users/joemeyer/Documents/gpt2-sound-gen/tests/trained_model7",
             tokenizer_file="aitextgen000.tokenizer.json",
             prompt="<|endoftext|>",
             min_audio_samples=100,

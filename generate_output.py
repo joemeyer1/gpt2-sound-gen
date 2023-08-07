@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-# Copyright (c) Joe Meyer (2021). All rights reserved.
+# Copyright (c) Joe Meyer (2020-2023). All rights reserved.
 
 import os
 from typing import Optional
@@ -87,7 +87,7 @@ def _generate_raw(
                 next_generated_text_prompt = generated_data[-window_length:]
                 next_generated_text = ai.generate(
                     n=1,
-                    max_length=512,
+                    max_length=1024,
                     min_length=4,
                     # batch_size=100,
                     prompt=next_generated_text_prompt,
@@ -159,7 +159,7 @@ def get_clean_next_generated_text(generated_text: str) -> str:
         for i in range(len(text)):
             if text[i] == '-' and len(chunk) > 0:
                 return chunk
-            elif text[i].isdigit():
+            elif text[i].isdecimal():
                 chunk += text[i]
                 if len(chunk) == 3:
                     return chunk

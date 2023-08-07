@@ -1,8 +1,10 @@
 #!usr/bin/env python3
-# Copyright (c) Joe Meyer (2021). All rights reserved.
+# Copyright (c) Joseph Meyer (2020-2023). All rights reserved.
 
 import os
 from typing import Optional
+
+from dataclasses import dataclass
 
 import fire
 
@@ -16,11 +18,17 @@ from generate_output import make_name_unique
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
+@dataclass
+class ModelData:
+    tokenizer_filename: str
+    model_dir: str
+
+
 def train_gpt2(
     steps: int,
     n_max_files: int,
     in_wav_dir_name: str,
-    wav_str_filename: str,
+    formatted_training_data_filename: str,
     output_dir: str,
     tokenizer_name: str,
     use_previous_training_data: bool,
@@ -29,7 +37,7 @@ def train_gpt2(
     overwrite_previous_model: bool,
     load_model_from_chkpt: Optional[str] = None,
     block_size: Optional[int] = None,  # only relevant if training new model
-) -> None:
+) -> ModelData:
 
     if block_size:
         _MAX_BLOCK_SIZE = 1024
@@ -37,22 +45,22 @@ def train_gpt2(
                                           f" pre-trained GPT-2 cannot handle more tokens due to limited receptive field"
 
     if use_previous_training_data:
-        assert os.path.exists(wav_str_filename), f"training data {wav_str_filename} not found"
-        print(f"using previous training data file: {wav_str_filename}")
+        assert os.path.exists(formatted_training_data_filename), f"training data {formatted_training_data_filename} not found"
+        print(f"using previous training data file: {formatted_training_data_filename}")
     else:
-        print(f"Creating file {wav_str_filename} from dir {in_wav_dir_name}\n")
+        print(f"Creating file {formatted_training_data_filename} from dir {in_wav_dir_name}\n")
         format_data_for_training(
             in_wav_dir_name=in_wav_dir_name,
-            output_filename=wav_str_filename,
+            output_filename=formatted_training_data_filename,
             n_max_files=n_max_files,
         )
 
     if not load_model_from_chkpt:
-        n_tokens = len(set(TokenDataset(wav_str_filename, block_size=block_size).tokens))  # can also be arbitrary int, e.g. 1000
+        n_tokens = len(set(TokenDataset(formatted_training_data_filename, block_size=block_size).tokens))  # can also be arbitrary int, e.g. 1000
         print(f"Found vocab of size {n_tokens}\n")
         if not overwrite_previous_model:
             tokenizer_name = make_name_unique(tokenizer_name)
-        train_tokenizer(wav_str_filename, vocab_size=n_tokens, prefix=tokenizer_name)
+        train_tokenizer(formatted_training_data_filename, vocab_size=n_tokens, prefix=tokenizer_name)
 
         config = build_gpt2_config(
             vocab_size=n_tokens,
@@ -76,13 +84,14 @@ def train_gpt2(
         output_dir = make_name_unique(output_dir)
     print(f"Training model {output_dir} for {steps} epochs with learning rate {learning_rate}\n")
     ai.train(
-        train_data=wav_str_filename,
+        train_data=formatted_training_data_filename,
         num_steps=steps,
         learning_rate=learning_rate,
         batch_size=16,
         output_dir=output_dir,
         save_every=save_model_every_n_epochs,
     )
+    return ModelData(tokenizer_filename=tokenizer_name, model_dir=output_dir)
 
 
 if __name__ == "__main__":
