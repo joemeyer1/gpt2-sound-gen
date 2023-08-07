@@ -4,6 +4,8 @@
 import os
 from typing import Optional
 
+from dataclasses import dataclass
+
 import fire
 
 from aitextgen.aitextgen import aitextgen
@@ -14,6 +16,12 @@ from data_parsing_helpers.wav_to_vec import format_data_for_training
 from generate_output import make_name_unique
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
+@dataclass
+class ModelData:
+    tokenizer_filename: str
+    model_dir: str
 
 
 def train_gpt2(
@@ -29,7 +37,7 @@ def train_gpt2(
     overwrite_previous_model: bool,
     load_model_from_chkpt: Optional[str] = None,
     block_size: Optional[int] = None,  # only relevant if training new model
-) -> None:
+) -> ModelData:
 
     if block_size:
         _MAX_BLOCK_SIZE = 1024
@@ -83,6 +91,7 @@ def train_gpt2(
         output_dir=output_dir,
         save_every=save_model_every_n_epochs,
     )
+    return ModelData(tokenizer_filename=tokenizer_name, model_dir=output_dir)
 
 
 if __name__ == "__main__":
