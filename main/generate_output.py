@@ -172,15 +172,15 @@ def get_clean_next_generated_text(generated_text: str) -> str:
         return str(min(int(first_ints_chunk), 255))
 
 
-def clean_model_output(model_output: str, bits_per_word=8) -> str:
-    clean_output = ""
-    model_output_words = model_output.split('-')
-    for model_output_word in model_output_words:
-        truncated_word = model_output_word[:bits_per_word]
-        padding = "0" * (bits_per_word - len(truncated_word))
-        clean_model_output_item = padding + truncated_word + '-'
-        clean_output += clean_model_output_item
-    return clean_output
+# def clean_model_output(model_output: str, bits_per_word=8) -> str:
+#     clean_output = ""
+#     model_output_words = model_output.split('-')
+#     for model_output_word in model_output_words:
+#         truncated_word = model_output_word[:bits_per_word]
+#         padding = "0" * (bits_per_word - len(truncated_word))
+#         clean_model_output_item = padding + truncated_word + '-'
+#         clean_output += clean_model_output_item
+#     return clean_output
 
 
 def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes:
@@ -195,18 +195,18 @@ def restore_audio_pressures(generated_text: str, bytes_per_sample: int) -> bytes
     return hex_pressures
 
 
-def add_spaces_and_linebreaks(audio_pressures: bytes) -> str:
-    audio_with_spaces_and_linebreaks: str = ''
-    for i, ch in enumerate(audio_pressures):
-        if i != 0:
-            if (i % 32) == 0:
-                audio_with_spaces_and_linebreaks += '\n'
-            elif (i % 4) == 0:
-                audio_with_spaces_and_linebreaks += ' '
-
-        audio_with_spaces_and_linebreaks += ch
-
-    return audio_with_spaces_and_linebreaks
+# def add_spaces_and_linebreaks(audio_pressures: bytes) -> str:
+#     audio_with_spaces_and_linebreaks: str = ''
+#     for i, ch in enumerate(audio_pressures):
+#         if i != 0:
+#             if (i % 32) == 0:
+#                 audio_with_spaces_and_linebreaks += '\n'
+#             elif (i % 4) == 0:
+#                 audio_with_spaces_and_linebreaks += ' '
+#
+#         audio_with_spaces_and_linebreaks += ch
+#
+#     return audio_with_spaces_and_linebreaks
 
 
 def make_name_unique(name: str) -> str:
