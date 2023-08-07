@@ -14,16 +14,17 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
     load_model_from_chkpt = None
     use_previous_training_data = False
 
-    for _ in range(n_cycles):
+    for i in range(n_cycles):
+        steps: int = 10 if i != 0 else 0
         model_data: ModelData = train_gpt2(
-            steps=10,
+            steps=steps,
             n_max_files=10,
             in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_strings",
             formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/formatted_training_data_strings/generated_strings_short_cycle_model.txt",
-            output_dir="/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model",
+            output_dir=model_data.model_dir,
             tokenizer_name=model_data.tokenizer_filename,
             use_previous_training_data=use_previous_training_data,
-            learning_rate=1e-5,
+            learning_rate=1e-3,
             load_model_from_chkpt=load_model_from_chkpt,
             save_model_every_n_epochs=10,
             overwrite_previous_model=False,
