@@ -13,7 +13,7 @@ class GPTTests(unittest.TestCase):
             steps=1,
             n_max_files=1,
             in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_toy",
-            wav_str_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/generated_sound_toy.txt",
+            formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/generated_sound_toy.txt",
             output_dir="/Users/joemeyer/Documents/gpt2-sound-gen/trained_model_toy",
             tokenizer_name="aitextgen000.tokenizer.json",
             use_previous_training_data=False,
