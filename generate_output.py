@@ -159,7 +159,7 @@ def get_clean_next_generated_text(generated_text: str) -> str:
         for i in range(len(text)):
             if text[i] == '-' and len(chunk) > 0:
                 return chunk
-            elif text[i].isdigit():
+            elif text[i].isdecimal():
                 chunk += text[i]
                 if len(chunk) == 3:
                     return chunk
