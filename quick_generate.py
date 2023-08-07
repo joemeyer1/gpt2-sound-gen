@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-# Copyright (c) Joseph Meyer. All rights reserved.
+# Copyright (c) Joseph Meyer (2020-2023). All rights reserved.
 
 from generate_output import generate_wav
 

@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-# Copyright (c) Joe Meyer (2021). All rights reserved.
+# Copyright (c) Joe Meyer (2020-2023). All rights reserved.
 
 import os
 from typing import Optional
