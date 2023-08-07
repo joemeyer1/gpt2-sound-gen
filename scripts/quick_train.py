@@ -14,7 +14,7 @@ def quick_train():
         tokenizer_name='/Users/joemeyer/Documents/gpt2-sound-gen/strings_tokenizer_short0',
         use_previous_training_data=False,
         learning_rate=1e-5,
-        load_model_from_chkpt="trained_strings_model2",
+        load_model_from_chkpt="/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model2",
         save_model_every_n_epochs=1000,
         overwrite_previous_model=False,
         block_size=1024,
