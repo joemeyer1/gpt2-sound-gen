@@ -87,7 +87,7 @@ def _generate_raw(
                 next_generated_text_prompt = generated_data[-window_length:]
                 next_generated_text = ai.generate(
                     n=1,
-                    max_length=512,
+                    max_length=1024,
                     min_length=4,
                     # batch_size=100,
                     prompt=next_generated_text_prompt,
