@@ -16,16 +16,16 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
 
     for i in range(n_cycles):
         print('\n\nTRAINING::\n')
-        steps: int = 100 if i != 0 else 0
+        steps: int = 1000 if i != 0 else 0
         print(f"model_data.model_dir: {model_data.model_dir}\n")
         model_data: ModelData = train_gpt2(
             steps=steps,
-            n_max_files=2,
+            n_max_files=200,
             in_wav_dir_name="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_strings",
             formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/formatted_training_data_strings/generated_strings_short_cycle_model.txt",
             output_dir=base_model_dir,
             tokenizer_name=model_data.tokenizer_filename,
-            use_previous_training_data=False,
+            use_previously_formatted_training_data=False,
             learning_rate=1e-3,
             load_model_from_chkpt=load_model_from_chkpt,
             save_model_every_n_epochs=steps,
@@ -37,8 +37,8 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
             model_folder=model_data.model_dir,
             tokenizer_file=f"{model_data.tokenizer_filename}.tokenizer.json",
             prompt="<|endoftext|>",
-            min_audio_samples=100,
-            window_length=100,
+            min_audio_samples=1000,
+            window_length=1000,
             write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_strings/generated_strings_cycle.wav",
             overwrite_previous_model_data=False,
             num_channels=1,

@@ -16,7 +16,7 @@ class GPTTests(unittest.TestCase):
             formatted_training_data_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_toy/generated_sound_toy.txt",
             output_dir="/Users/joemeyer/Documents/gpt2-sound-gen/trained_model_toy",
             tokenizer_name="aitextgen000.tokenizer.json",
-            use_previous_training_data=False,
+            use_previously_formatted_training_data=False,
             learning_rate=1e-3,
             load_model_from_chkpt=None,
             save_model_every_n_epochs=1,

@@ -31,7 +31,7 @@ def train_gpt2(
     formatted_training_data_filename: str,
     output_dir: str,
     tokenizer_name: str,
-    use_previous_training_data: bool,
+    use_previously_formatted_training_data: bool,
     learning_rate: float,
     save_model_every_n_epochs: int,
     overwrite_previous_model: bool,
@@ -44,7 +44,7 @@ def train_gpt2(
         assert block_size <= _MAX_BLOCK_SIZE, f"block_size: {block_size} cannot exceed max_block_size: {_MAX_BLOCK_SIZE} -" \
                                           f" pre-trained GPT-2 cannot handle more tokens due to limited receptive field"
 
-    if use_previous_training_data:
+    if use_previously_formatted_training_data:
         assert os.path.exists(formatted_training_data_filename), f"training data {formatted_training_data_filename} not found"
         print(f"using previous training data file: {formatted_training_data_filename}")
     else:
