@@ -15,6 +15,7 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
     use_previous_training_data = False
 
     for i in range(n_cycles):
+        print('\n\nTRAINING::\n')
         steps: int = 10 if i != 0 else 0
         model_data: ModelData = train_gpt2(
             steps=steps,
@@ -30,6 +31,7 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
             overwrite_previous_model=False,
             block_size=1024,
         )
+        print('\n\nGENERATING::\n')
         generate_wav(
             model_folder=model_data.model_dir,
             tokenizer_file=f"{model_data.tokenizer_filename}.tokenizer.json",
