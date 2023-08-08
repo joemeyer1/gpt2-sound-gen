@@ -1,6 +1,6 @@
 # Generating Audio Samples with Machine Learning
  
-I started this project in 2020, paused development for a couple years, then revisited it in 2023 (it is still a work in progress). It went through a few different iterations.
+I started this project in 2020, paused development for a couple years, then revisited it in 2023 (it is still a work in progress). It went through a few different iterations. <br>
 
 **Initial, naive implementation:** Generate raw wav with GPT-2.<br>
 
@@ -19,7 +19,7 @@ I started this project in 2020, paused development for a couple years, then revi
 
 <br>
 
-**Next Steps** <br>
+**Next Steps:** <br>
   - Experiment with training different models on different audio source types, and explore the spaces generated under these different conditions
     - I will upload demo samples soon
   - Incorporate causal convolutions to broaden receptive field
