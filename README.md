@@ -22,6 +22,6 @@ I started this project in 2020, paused development for a couple years, then revi
 **Next Steps:** <br>
   - Experiment with training different models on different audio source types, and explore the spaces generated under these different conditions.
     - I will upload demo samples soon.
-  - Incorporate causal convolutions to broaden receptive field.
   - Experiment with other language models besides GPT-2.
     - I chose to use a relatively small Large Language Model (ha) because I am training models on my laptop. But given more computation bandwidth, this code can support other, more complex models with minimal modification.
+  - Incorporate causal convolutions to broaden receptive field.
