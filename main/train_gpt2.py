@@ -2,9 +2,8 @@
 # Copyright (c) Joseph Meyer (2020-2023). All rights reserved.
 
 import os
-from typing import Optional
-
 from dataclasses import dataclass
+from typing import Optional
 
 import fire
 

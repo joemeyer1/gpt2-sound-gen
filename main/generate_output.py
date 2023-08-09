@@ -7,8 +7,8 @@ from typing import Optional
 import fire
 from tqdm import tqdm
 
-from aitextgen.aitextgen.utils import model_max_length
 from aitextgen.aitextgen import aitextgen
+from aitextgen.aitextgen.utils import model_max_length
 
 from data_parsing_helpers.file_helpers import unbin_data
 from data_parsing_helpers.vec_to_wav import write_header, int_to_hex
