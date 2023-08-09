@@ -23,7 +23,7 @@ def test_cycle_train_and_generate(
         model_dir=base_model_dir,
     )
 
-    n_epochs_until_sample_generation = gen_sample_every_n_epochs
+    n_epochs_until_sample_generation = 0  # save model and generate at epoch 0
     n_epochs_until_data_refresh = refresh_data_every_n_epochs
     use_previously_formatted_training_data = False
     for i in range(n_cycles):
@@ -34,7 +34,7 @@ def test_cycle_train_and_generate(
                 n_epochs_until_data_refresh = refresh_data_every_n_epochs
 
             print('\n\nTRAINING::\n')
-            steps: int = min(gen_sample_every_n_epochs, n_epochs_until_data_refresh)  # if i != 0 else 0
+            steps: int = min(gen_sample_every_n_epochs, n_epochs_until_data_refresh)
             print(f"model_data.model_dir: {model_data.model_dir}\n")
             model_data: ModelData = train_gpt2(
                 steps=steps,
@@ -46,7 +46,7 @@ def test_cycle_train_and_generate(
                 use_previously_formatted_training_data=use_previously_formatted_training_data,
                 learning_rate=1e-2,
                 load_model_from_chkpt=load_model_from_chkpt,
-                save_model_every_n_epochs=steps + 1,
+                save_model_every_n_epochs=steps + 1,  # model will save after steps are done, so avoid writing twice
                 overwrite_previous_model=False,
                 block_size=1024,
             )
