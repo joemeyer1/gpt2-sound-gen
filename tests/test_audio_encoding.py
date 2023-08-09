@@ -4,11 +4,9 @@
 
 import unittest
 
-from data_parsing_helpers.wav_to_vec import get_training_data
 from data_parsing_helpers.file_helpers import bin_data
-from data_parsing_helpers.wav_to_vec import format_data_for_training
 from data_parsing_helpers.vec_to_wav import vec_to_wav
-from data_parsing_helpers.wav_to_vec import extract_data, extract_binned_data
+from data_parsing_helpers.wav_to_vec import extract_data, extract_binned_data, format_data_for_training, get_training_data
 from main.generate_output import write_wav, decode_generated_text, get_clean_next_generated_text
 
 
