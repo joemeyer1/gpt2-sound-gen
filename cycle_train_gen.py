@@ -5,18 +5,25 @@ from main.generate_output import generate_wav
 from main.train_gpt2 import train_gpt2, ModelData
 
 
-def test_cycle_train_and_generate(n_cycles: int = 4):
+def test_cycle_train_and_generate(
+        n_cycles: int = 4,
+        base_model_dir: str = "/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model_cycle00",
+        load_model_from_chkpt: str = "/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model_cycle1",
+        tokenizer_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/tokenizers/strings_tokenizer_cycle0",
+        train_steps_per_cycle: int = 500,
 
-    base_model_dir = "/Users/joemeyer/Documents/gpt2-sound-gen/trained_strings_model_cycle"
+        write_wav_to_filename: str = "/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_strings/generated_strings_cycle0.wav",
+) -> None:
+
+
     model_data = ModelData(
-        tokenizer_filename="/Users/joemeyer/Documents/gpt2-sound-gen/tokenizers/strings_tokenizer_cycle",
+        tokenizer_filename=tokenizer_filename,
         model_dir=base_model_dir,
     )
-    load_model_from_chkpt = None
 
     for i in range(n_cycles):
         print('\n\nTRAINING::\n')
-        steps: int = 1000 if i != 0 else 0
+        steps: int = train_steps_per_cycle  # if i != 0 else 0
         print(f"model_data.model_dir: {model_data.model_dir}\n")
         model_data: ModelData = train_gpt2(
             steps=steps,
@@ -39,7 +46,7 @@ def test_cycle_train_and_generate(n_cycles: int = 4):
             prompt="<|endoftext|>",
             min_audio_samples=1000,
             window_length=1000,
-            write_wav_to_filename="/Users/joemeyer/Documents/gpt2-sound-gen/sound_data_output_strings/generated_strings_cycle.wav",
+            write_wav_to_filename=write_wav_to_filename,
             overwrite_previous_model_data=False,
             num_channels=1,
             sample_rate=48000,
