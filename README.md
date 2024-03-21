@@ -25,3 +25,7 @@ I started this project in 2020, paused development for a couple years, then revi
   - Experiment with other language models besides GPT-2.
     - I chose to use a relatively small Large Language Model (ha) because I am training models on my laptop. But given more computation bandwidth, this code can support other, more complex models with minimal modification.
   - Incorporate causal convolutions to broaden receptive field.
+
+<br>
+
+**Audio Consultants:** Alessandro Bonomi, Tomu Tomu
